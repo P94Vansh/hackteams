@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  name        String
+  university  String?
+  course      String?
+  year        String?
+  location    String?
+  bio         String?
+  github      String?
+  portfolio   String?
+  createdAt   DateTime      @default(now())
+
+  skills       String[]   @default([])
+  interests    String[]   @default([])
+  projects     Project[]
+  achievements Achievement[]
+
+}
+
+
+
+model Project {
+  id           Int      @id @default(autoincrement())
+  name         String
+  bio          String
+  skills       String[] @default([])
+  createdById  Int
+  createdBy    User     @relation(fields: [createdById], references: [id])
+}
+
+model Achievement {
+  id            Int      @id @default(autoincrement())
+  name          String
+  month         String
+  year          String
+  achievedById  Int
+  achievedBy    User     @relation(fields: [achievedById], references: [id])
+}
