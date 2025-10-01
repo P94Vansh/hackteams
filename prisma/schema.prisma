@@ -25,11 +25,12 @@ model User {
   interests    String[]   @default([])
   projects     Project[]
   achievements Achievement[]
+  hackathonsCreated Hackathon[] @relation("HackathonLeader")
+   applications      Application[]
+  teamsLed          Team[]      @relation("LeaderTeams")
+  teamMemberships   TeamMember[]
 
 }
-
-
-
 model Project {
   id           Int      @id @default(autoincrement())
   name         String
@@ -46,4 +47,68 @@ model Achievement {
   year          String
   achievedById  Int
   achievedBy    User     @relation(fields: [achievedById], references: [id])
+}
+enum TeamStatus {
+  active
+  submitted
+  disbanded
+}
+enum ApplicationStatus {
+  pending
+  accepted
+  rejected
+  withdrawn
+}
+model Hackathon {
+  id                   Int        @id @default(autoincrement())
+  userId               Int
+  hackathonName        String      /// Name of the hackathon:-sih,dhisa coer etc
+  hackathonDescription String     // deadline, duration, etc.
+  problemStatement     String
+  teamSize             Int
+  createdAt            DateTime   @default(now())
+
+  
+  leader       User          @relation("HackathonLeader", fields: [userId], references: [id])
+  applications Application[]
+  team         Team?
+}
+model Team {
+  id        Int        @id @default(autoincrement())
+  hackathonId    Int         @unique
+  leaderId  Int
+  status    TeamStatus @default(active)
+  repoLink  String?
+  createdAt DateTime   @default(now())
+
+  
+  hackathon Hackathon   @relation(fields: [hackathonId], references: [id])
+  leader    User        @relation("LeaderTeams", fields: [leaderId], references: [id])
+  members   TeamMember[]
+}
+
+model TeamMember {
+  teamId Int
+  userId Int
+  role   String?
+
+  team Team @relation(fields: [teamId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([teamId, userId]) 
+}
+  
+
+model Application {
+  id              Int               @id @default(autoincrement())
+  hackathonId          Int
+  applicantId     Int
+  applicantSkills String[]          @default([])
+  coverNote       String?
+  status          ApplicationStatus @default(pending)
+  submittedAt     DateTime          @default(now())
+
+
+  hackathon Hackathon @relation(fields: [hackathonId], references: [id])
+  applicant User      @relation(fields: [applicantId], references: [id])
 }

@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     // get token from cookies
-    const cookieStore = cookies();
+    const cookieStore =  await cookies();
     const token = cookieStore.get("token")?.value;
 
     if (!token) {
