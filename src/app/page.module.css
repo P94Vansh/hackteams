@@ -1,0 +1,191 @@
+/* src/app/page.module.css */
+
+.heroSection {
+  position: relative;
+  overflow: hidden;
+}
+
+.heroBackgroundContainer {
+  position: absolute;
+  inset: 0;
+  z-index: -1; /* Ensure background is behind content */
+}
+
+.heroBackgroundImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Equivalent to bg-black/60 */
+}
+
+.heroContentContainer {
+  position: relative; /* Ensure content is above overlay */
+  /* Tailwind equivalent: container py-32 lg:py-48 */
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .heroContentContainer {
+    padding-top: 12rem;
+    padding-bottom: 12rem;
+  }
+}
+
+.heroTextContent {
+  max-width: 48rem; /* Equivalent to max-w-3xl */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.heroBadge {
+  margin-bottom: 1.5rem; /* mb-6 */
+  /* Specific badge styles can go here if needed */
+}
+
+.heroTitle {
+  font-size: 3rem; /* text-5xl */
+  line-height: 1.1;
+  font-weight: 800; /* font-extrabold */
+  margin-bottom: 1.5rem; /* mb-6 */
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Equivalent to drop-shadow-md */
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .heroTitle {
+    font-size: 4.5rem; /* text-7xl */
+  }
+}
+
+.heroDescription {
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75; /* leading-relaxed */
+  color: #e5e7eb; /* text-gray-200 */
+  margin-bottom: 2.5rem; /* mb-10 */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Equivalent to drop-shadow-sm */
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .heroDescription {
+    font-size: 1.5rem; /* text-2xl */
+    line-height: 2rem; /* leading-loose */
+  }
+}
+
+.heroActions {
+  margin-top: 3rem; /* mt-12 */
+}
+
+.statsSection {
+  padding-top: 5rem; /* py-20 */
+  padding-bottom: 5rem;
+  background-color: rgba(243, 244, 246, 0.5); /* bg-muted/50 */
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .statsSection {
+    padding-top: 6rem; /* py-24 */
+    padding-bottom: 6rem;
+  }
+}
+
+.statItemValue {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700; /* font-bold */
+  color: var(--primary); /* Use CSS variable */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .statItemValue {
+    font-size: 3rem; /* text-5xl */
+  }
+}
+
+.statItemLabel {
+  font-size: 1.125rem; /* text-lg */
+  color: var(--muted-foreground); /* Use CSS variable */
+}
+
+.sectionPadding {
+   padding-top: 6rem; /* py-24 */
+   padding-bottom: 6rem;
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .sectionPadding {
+    padding-top: 7rem; /* py-28 */
+    padding-bottom: 7rem;
+  }
+}
+
+.sectionTitle {
+    font-size: 2.25rem; /* text-4xl */
+    font-weight: 700;
+    margin-bottom: 1.5rem; /* mb-6 */
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .sectionTitle {
+    font-size: 3rem; /* text-5xl */
+  }
+}
+
+ .sectionDescription {
+    font-size: 1.25rem; /* text-xl */
+    color: var(--muted-foreground);
+    max-width: 48rem; /* max-w-3xl */
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.75; /* leading-relaxed */
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+    .sectionDescription {
+        font-size: 1.5rem; /* text-2xl */
+        line-height: 2rem; /* leading-loose */
+    }
+}
+
+.featureCardContent {
+    padding: 2.5rem; /* p-10 */
+}
+
+.featureIconWrapper {
+    width: 4rem; /* w-16 */
+    height: 4rem; /* h-16 */
+    border-radius: 9999px; /* rounded-full */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2rem; /* mb-8 */
+}
+/* Define background colors per feature icon type */
+.featureIconPrimaryBg { background-color: rgba(59, 130, 246, 0.1); } /* primary/10 */
+.featureIconAccentBg { background-color: rgba(139, 92, 246, 0.1); } /* accent/10 */
+.featureIconSuccessBg { background-color: rgba(34, 197, 94, 0.1); } /* green-500/10 */
+
+.featureTitle {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+.featureDescription {
+    color: var(--muted-foreground);
+    line-height: 1.75; /* leading-relaxed */
+}
+
+.ctaSection {
+    padding-top: 5rem; /* py-20 */
+    padding-bottom: 5rem;
+    background-image: linear-gradient(to right, var(--primary), var(--accent));
+    color: var(--primary-foreground);
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .ctaSection {
+    padding-top: 6rem; /* py-24 */
+    padding-bottom: 6rem;
+  }
+}

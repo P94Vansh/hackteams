@@ -47,7 +47,6 @@ const EventCard = ({
                 {title}
               </h3>
               <Badge className={statusColors[status]} variant="secondary">
-                {status}
               </Badge>
             </div>
             <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
