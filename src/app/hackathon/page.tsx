@@ -64,7 +64,7 @@ export default function HackathonForm() {
       onSubmit={handleSubmit}
       className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6 space-y-4"
     >
-      <h2 className="text-2xl font-bold mb-4">Create Hackathon</h2>
+      <h2 className="text-2xl font-bold mb-4">Create Teams</h2>
 
       <div>
         <label className="block text-sm font-medium mb-1">Hackathon Name</label>
@@ -120,7 +120,7 @@ export default function HackathonForm() {
         disabled={loading}
         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
       >
-        {loading ? "Creating..." : "Create Hackathon"}
+        {loading ? "Creating..." : "Create Team"}
       </button>
 
       {message && (

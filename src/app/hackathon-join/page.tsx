@@ -66,7 +66,7 @@ export default function HackathonApplicationForm() {
 
       {/* Skills input */}
       <div>
-        <label className="block mb-1 font-medium">Skills you need</label>
+        <label className="block mb-1 font-medium">Skills you have</label>
         <div className="flex gap-2">
           <input
             type="text"

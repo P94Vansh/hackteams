@@ -44,7 +44,9 @@ const Header = () => {
                             <Search className="h-5 w-5" />
                         </Button>
                         <Button variant="ghost" size="icon" aria-label="Notifications">
+                            <Link href={'/notifications'}>
                             <Bell className="h-5 w-5" />
+                            </Link>
                         </Button>
 
                         {/* Dropdown Menu for Profile & Main Nav */}

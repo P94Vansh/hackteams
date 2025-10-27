@@ -10,17 +10,14 @@ export async function POST(req: NextRequest) {
     // get token from cookies
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
-
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload & { userId: number };
-    console.log("decoded", decoded)
     const userId = decoded.id;
 
     const { name, bio, skills } = await req.json();
-    console.log(userId)
     const project = await prisma.project.create({
       data: {
         name,
@@ -48,8 +45,7 @@ export async function GET() {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload & { userId: number };
-    const userId = decoded.userId;
-
+    const userId = decoded.id;
     const projects = await prisma.project.findMany({
       where: { createdById: userId },
     });
