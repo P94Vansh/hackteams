@@ -30,6 +30,7 @@ export default function HackathonDashboard() {
           throw new Error("Failed to fetch hackathons");
         }
         const data = await res.json();
+        console.log(data)
         setHackathons(data.hackathons || []);
       } catch (err) {
         console.error("Error fetching hackathons:", err);
@@ -88,14 +89,14 @@ export default function HackathonDashboard() {
             <span className="font-semibold">Team Size:</span>{" "}
             {hackathon.teamSize}
           </p>
-
           {hackathon.leader && (
+            <Link href={`/u/${hackathon.leader.id}`}>
             <p className="text-gray-500 text-sm">
               <span className="font-semibold">Leader:</span>{" "}
               {hackathon.leader.name}
             </p>
         
-            
+            </Link>
           )}
           <Link 
   href={`/hackathon-join?hackathonId=${hackathon.id}`} 

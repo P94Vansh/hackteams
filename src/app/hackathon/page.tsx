@@ -79,7 +79,7 @@ export default function HackathonForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-sm font-medium mb-1">Your Idea</label>
         <textarea
           name="hackathonDescription"
           value={formData.hackathonDescription}
