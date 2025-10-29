@@ -1,0 +1,126 @@
+/* src/app/hackathon/hackathon.module.css */
+
+.pageContainer {
+    padding: 2rem 1rem; /* Add some padding around the form */
+    display: flex;
+    justify-content: center;
+    background-color: var(--background); /* Use background color */
+    min-height: calc(100vh - 4rem); /* Adjust based on header height if needed */
+}
+
+.formContainer {
+  max-width: 32rem; /* max-w-lg */
+  width: 100%; /* Ensure it takes width up to max-width */
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--card); /* Use card background */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+  border-radius: 0.75rem; /* rounded-lg */
+  padding: 1.5rem; /* p-6 */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* space-y-4 */
+  border: 1px solid var(--border); /* Add border */
+  height: fit-content; /* Prevent form stretching full height */
+}
+
+.formTitle {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 1rem; /* mb-4 */
+  text-align: center; /* Center title */
+  color: var(--foreground); /* Use foreground color */
+}
+
+.inputGroup {
+  /* No direct equivalent needed if gap handles spacing */
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  margin-bottom: 0.25rem; /* mb-1 */
+  color: var(--foreground); /* Use foreground color */
+}
+
+.inputField,
+.textareaField {
+  width: 100%;
+  border: 1px solid var(--input); /* border, use input border color */
+  border-radius: 0.375rem; /* rounded */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  background-color: var(--background); /* Use page background or input specific background */
+  color: var(--foreground);
+  font-size: 0.875rem; /* text-sm */
+}
+.inputField::placeholder,
+.textareaField::placeholder {
+    color: var(--muted-foreground);
+    opacity: 0.7;
+}
+.inputField:focus-visible,
+.textareaField:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: var(--ring);
+    border-color: var(--primary); /* Highlight border on focus */
+}
+
+
+.textareaField {
+  /* Specific textarea styles if needed, rows handled inline */
+  min-height: 4rem; /* Adjust if needed */
+}
+
+/* Updated Submit Button styles */
+.submitButton {
+  width: 100%;
+  /* Apply gradient background */
+  background-image: linear-gradient(to right, var(--primary), var(--accent));
+  color: #000000; /* Use black text like register button */
+  background-color: transparent; /* Remove solid background */
+  padding: 0.625rem 0; /* py-2.5 equivalent */
+  border-radius: 0.375rem; /* rounded */
+  transition: opacity 150ms ease-in-out; /* Transition opacity */
+  border: none;
+  font-weight: 600; /* font-semibold */
+  cursor: pointer;
+  box-shadow: var(--tw-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)); /* shadow-md */
+}
+.submitButton:hover:not(:disabled) { /* Apply hover only when not disabled */
+  opacity: 0.9; /* Use opacity for hover effect like register button */
+  background-color: transparent; /* Keep background transparent on hover */
+}
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-image: none; /* Remove gradient when disabled */
+  background-color: var(--secondary); /* Fallback to secondary color */
+  color: var(--secondary-foreground); /* Use secondary text color */
+  box-shadow: none; /* Remove shadow when disabled */
+}
+
+/* Feedback message styles */
+.messageBase {
+    margin-top: 0.5rem; /* mt-2 */
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.successMessage {
+  color: #155724; /* text-green-700 */
+  background-color: #d4edda; /* bg-green-100 */
+  border: 1px solid #c3e6cb; /* border-green-200 */
+}
+
+.errorMessage {
+  color: #721c24; /* text-red-700 */
+  background-color: #f8d7da; /* bg-red-100 */
+  border: 1px solid #f5c6cb; /* border-red-200 */
+}

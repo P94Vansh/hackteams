@@ -1,0 +1,225 @@
+/* src/app/hackathon-join/hackathon-join.module.css */
+
+.pageContainer {
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    background-color: var(--background);
+    min-height: calc(100vh - 4rem); /* Adjust based on header height */
+}
+
+.loadingFallback {
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted-foreground);
+    font-style: italic;
+}
+
+
+.formContainer {
+  max-width: 32rem; /* max-w-lg */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--card); /* bg-white */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+  border-radius: 1rem; /* rounded-2xl */
+  padding: 1.5rem; /* p-6 */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* space-y-4 */
+  border: 1px solid var(--border);
+  height: fit-content;
+}
+
+.formTitle {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 0.5rem; /* Less margin than create page */
+  color: var(--foreground);
+  text-align: center;
+}
+
+.hackathonIdText {
+    font-size: 0.875rem; /* text-sm */
+    color: var(--muted-foreground);
+    text-align: center;
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+.inputGroup {
+  /* Group styles */
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.25rem; /* mb-1 */
+  font-weight: 500; /* font-medium */
+  color: var(--foreground);
+}
+
+/* Skill Input Specifics */
+.skillAddContainer {
+  display: flex;
+  gap: 0.5rem; /* gap-2 */
+}
+
+.skillInputField {
+  flex-grow: 1; /* flex-1 */
+  border: 1px solid var(--input);
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  background-color: var(--background);
+  color: var(--foreground);
+}
+.skillInputField:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: var(--ring);
+    border-color: var(--primary);
+}
+
+
+/* Updated Add Button styles */
+.addButton {
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  /* Apply gradient background */
+  background-image: linear-gradient(to right, var(--primary), var(--accent));
+  color: #000000; /* Black text */
+  background-color: transparent; /* Remove solid background */
+  border-radius: 0.5rem; /* rounded-lg */
+  border: none;
+  cursor: pointer;
+  transition: opacity 150ms ease-in-out;
+  font-weight: 500; /* Match Button component weight */
+  box-shadow: var(--tw-shadow, 0 1px 2px 0 rgb(0 0 0 / 0.05)); /* shadow-sm */
+}
+.addButton:hover:not(:disabled) {
+  opacity: 0.9; /* Opacity hover */
+  background-color: transparent; /* Keep background transparent */
+}
+.addButton:disabled {
+    opacity: 0.5; /* Standard disabled opacity */
+    cursor: not-allowed;
+    background-image: none; /* Remove gradient */
+    background-color: var(--secondary); /* Fallback to secondary */
+    color: var(--secondary-foreground); /* Use secondary text color */
+    box-shadow: none; /* Remove shadow when disabled */
+}
+
+
+/* Skills Display Area */
+.skillsDisplayContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* gap-2 */
+  margin-top: 0.75rem; /* mt-3 */
+  min-height: 2rem; /* Ensure some height even when empty */
+  padding: 0.5rem;
+  border: 1px dashed var(--border); /* Optional: visual indicator */
+  border-radius: 0.5rem;
+}
+
+.noSkillsText {
+    font-size: 0.875rem; /* text-sm */
+    color: var(--muted-foreground);
+    font-style: italic;
+    width: 100%; /* Take full width */
+    text-align: center;
+}
+
+.skillTag {
+  background-color: var(--secondary); /* bg-gray-200 */
+  color: var(--secondary-foreground);
+  padding: 0.25rem 0.75rem; /* px-3 py-1 */
+  border-radius: 9999px; /* rounded-full */
+  font-size: 0.875rem; /* text-sm */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem; /* gap-2 */
+  line-height: 1; /* Ensure button aligns well */
+}
+
+.removeSkillButton {
+  color: #dc2626; /* text-red-600 */
+  font-weight: 700; /* font-bold */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem; /* Add some space */
+  line-height: 1; /* Match tag line-height */
+  font-size: 1.1em; /* Make 'x' slightly larger */
+}
+.removeSkillButton:hover {
+    color: #b91c1c; /* Darker red */
+}
+
+
+/* Textarea */
+.textareaField {
+  width: 100%;
+  border: 1px solid var(--input);
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  background-color: var(--background);
+  color: var(--foreground);
+}
+.textareaField:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: var(--ring);
+    border-color: var(--primary);
+}
+.textareaField::placeholder {
+    color: var(--muted-foreground);
+    opacity: 0.7;
+}
+
+
+/* Submit Button */
+.submitButton {
+  width: 100%;
+  padding: 0.5rem 0; /* py-2 */
+  background-color: #16a34a; /* bg-green-600 */
+  color: white; /* text-white */
+  border-radius: 0.5rem; /* rounded-lg */
+  font-weight: 600; /* font-semibold */
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms ease-in-out, opacity 150ms ease-in-out;
+}
+.submitButton:hover:not(:disabled) {
+  background-color: #15803d; /* Darker green */
+}
+.submitButton:disabled {
+  opacity: 0.5; /* disabled:opacity-50 */
+  cursor: not-allowed;
+}
+
+/* Feedback messages */
+.messageBase {
+    margin-top: 0.75rem; /* mt-3 */
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.successMessage {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+
+.errorMessage {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}

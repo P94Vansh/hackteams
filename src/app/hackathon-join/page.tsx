@@ -1,14 +1,16 @@
+// src/app/hackathon-join/page.tsx
 "use client";
 
-import { useState } from "react";
-import {useSearchParams} from 'next/navigation';
-interface HackathonApplicationFormProps {
-  hackathonId: number;
-}
+import { useState, Suspense } from "react"; // Added Suspense
+import { useSearchParams } from 'next/navigation';
+import styles from './hackathon-join.module.css'; // Import CSS Module
+import { cn } from "@/lib/utils"; // Import cn if needed later
 
-export default function HackathonApplicationForm() {
+// Inner component to access searchParams
+function HackathonApplicationFormInner() {
   const searchParams = useSearchParams();
   const hackathonId = searchParams.get("hackathonId");
+
   const [skills, setSkills] = useState<string[]>([]);
   const [coverNote, setCoverNote] = useState("");
   const [skillInput, setSkillInput] = useState("");
@@ -16,14 +18,16 @@ export default function HackathonApplicationForm() {
   const [message, setMessage] = useState<string | null>(null);
 
   const addSkill = () => {
-    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
-      setSkills([...skills, skillInput.trim()]);
-      setSkillInput("");
+    // Trim input and check if it's not empty and not already in the list
+    const trimmedSkill = skillInput.trim();
+    if (trimmedSkill && !skills.includes(trimmedSkill)) {
+      setSkills([...skills, trimmedSkill]);
+      setSkillInput(""); // Clear input after adding
     }
   };
 
-  const removeSkill = (skill: string) => {
-    setSkills(skills.filter((s) => s !== skill));
+  const removeSkill = (skillToRemove: string) => {
+    setSkills(skills.filter((s) => s !== skillToRemove));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,100 +35,141 @@ export default function HackathonApplicationForm() {
     setLoading(true);
     setMessage(null);
 
+    // Basic validation
+    if (!hackathonId) {
+        setMessage("❌ Hackathon ID is missing.");
+        setLoading(false);
+        return;
+    }
+    if (skills.length === 0) {
+        setMessage("❌ Please add at least one skill.");
+        setLoading(false);
+        return;
+    }
+
     try {
-      const res = await fetch("/api/hackathonds", {
+      // API endpoint might be /api/applications based on other files, or keep /api/hackathonds
+      const res = await fetch("/api/hackathonds", { // Using original endpoint
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // token will be read from cookies automatically on server
+          // Token will be read from cookies automatically on server-side API route
         },
-        body: JSON.stringify({ hackathonId, skills, coverNote }),
+        // Ensure hackathonId is converted to number if required by API
+        body: JSON.stringify({ hackathonId: Number(hackathonId), skills, coverNote }),
       });
 
       const data = await res.json();
       if (res.ok) {
         setMessage("✅ Application submitted successfully!");
+        // Clear form fields
         setSkills([]);
         setCoverNote("");
+        setSkillInput("");
       } else {
-        setMessage(`❌ ${data.error || "Something went wrong"}`);
+        setMessage(`❌ ${data.error || "Something went wrong submitting the application"}`);
       }
     } catch (error) {
-      console.error(error);
-      setMessage("❌ Failed to submit application");
+      console.error("Application submission error:", error);
+      setMessage("❌ Failed to submit application due to a network or server error.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Determine message class based on content
+  const messageClass = message
+    ? message.startsWith("✅")
+      ? styles.successMessage
+      : styles.errorMessage
+    : '';
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-2xl space-y-4"
-    >
-      <h2 className="text-xl font-bold">Search for teammates</h2>
+    <div className={styles.pageContainer}>
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+            <h2 className={styles.formTitle}>Apply to Join Team</h2>
+            {/* Display Hackathon ID for context (optional) */}
+            {hackathonId && <p className={styles.hackathonIdText}>Applying for Hackathon ID: {hackathonId}</p>}
 
-      {/* Skills input */}
-      <div>
-        <label className="block mb-1 font-medium">Skills you have</label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={skillInput}
-            onChange={(e) => setSkillInput(e.target.value)}
-            placeholder="Add a skill"
-            className="flex-1 border rounded-lg px-3 py-2"
-          />
-          <button
-            type="button"
-            onClick={addSkill}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-          >
-            Add
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {skills.map((skill) => (
-            <span
-              key={skill}
-              className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+            {/* Skills Input Section */}
+            <div className={styles.inputGroup}>
+                <label htmlFor="skillInput" className={styles.label}>Your Skills</label>
+                <div className={styles.skillAddContainer}>
+                <input
+                    id="skillInput"
+                    type="text"
+                    value={skillInput}
+                    onChange={(e) => setSkillInput(e.target.value)}
+                    placeholder="Add a skill (e.g., React)"
+                    className={styles.skillInputField}
+                    // Add skill on Enter key press
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); }}}
+                />
+                <button
+                    type="button"
+                    onClick={addSkill}
+                    className={styles.addButton}
+                    disabled={!skillInput.trim()} // Disable if input is empty
+                >
+                    Add
+                </button>
+                </div>
+                {/* Display Added Skills */}
+                <div className={styles.skillsDisplayContainer}>
+                {skills.length === 0 ? (
+                    <p className={styles.noSkillsText}>No skills added yet.</p>
+                ) : (
+                    skills.map((skill) => (
+                        <span key={skill} className={styles.skillTag}>
+                        {skill}
+                        <button
+                            type="button"
+                            onClick={() => removeSkill(skill)}
+                            className={styles.removeSkillButton}
+                            aria-label={`Remove ${skill}`}
+                        >
+                            &times; {/* HTML entity for 'x' */}
+                        </button>
+                        </span>
+                    ))
+                )}
+                </div>
+            </div>
+
+            {/* Cover Note Section */}
+            <div className={styles.inputGroup}>
+                <label htmlFor="coverNote" className={styles.label}>Cover Note (Why you?)</label>
+                <textarea
+                    id="coverNote"
+                    value={coverNote}
+                    onChange={(e) => setCoverNote(e.target.value)}
+                    placeholder="Briefly explain why you'd be a good fit for the team..."
+                    className={styles.textareaField}
+                    rows={4}
+                />
+            </div>
+
+            {/* Submit Button */}
+            <button
+                type="submit"
+                disabled={loading || skills.length === 0} // Also disable if no skills added
+                className={styles.submitButton}
             >
-              {skill}
-              <button
-                type="button"
-                onClick={() => removeSkill(skill)}
-                className="text-red-600 font-bold"
-              >
-                ×
-              </button>
-            </span>
-          ))}
-        </div>
-      </div>
+                {loading ? "Submitting..." : "Submit Application"}
+            </button>
 
-      {/* Cover note */}
-      <div>
-        <label className="block mb-1 font-medium">Cover Note</label>
-        <textarea
-          value={coverNote}
-          onChange={(e) => setCoverNote(e.target.value)}
-          placeholder="Why should we select you?"
-          className="w-full border rounded-lg px-3 py-2"
-          rows={4}
-        />
-      </div>
-
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-2 bg-green-600 text-white rounded-lg font-semibold disabled:opacity-50"
-      >
-        {loading ? "Submitting..." : "Submit Application"}
-      </button>
-
-      {message && <p className="text-center mt-3">{message}</p>}
-    </form>
+            {/* Feedback Message */}
+            {message && <p className={`${styles.messageBase} ${messageClass}`}>{message}</p>}
+        </form>
+    </div>
   );
 }
 
+// Wrap the inner component with Suspense for useSearchParams
+export default function HackathonApplicationForm() {
+    return (
+        <Suspense fallback={<div className={styles.loadingFallback}>Loading form...</div>}>
+            <HackathonApplicationFormInner />
+        </Suspense>
+    );
+}

@@ -1,0 +1,141 @@
+/* src/app/hackathon-dash/hackathon-dash.module.css */
+
+.feedbackContainer {
+    padding: 1.5rem; /* p-6 */
+    text-align: center;
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+    color: var(--muted-foreground);
+}
+
+.errorText {
+    color: var(--destructive);
+}
+.mutedText {
+    color: var(--muted-foreground);
+}
+
+
+.gridContainer {
+  padding: 1.5rem; /* p-6 */
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
+  gap: 1.5rem; /* gap-6 */
+}
+
+/* Responsive grid columns */
+@media (min-width: 640px) { /* sm breakpoint */
+  .gridContainer {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* sm:grid-cols-2 */
+  }
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+  .gridContainer {
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* lg:grid-cols-3 */
+  }
+}
+
+/* Individual card styling */
+.hackathonCard {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem; /* rounded-xl */
+  padding: 1.25rem; /* p-5 */
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /* shadow-md */
+  transition: box-shadow 150ms ease-in-out;
+  background-color: var(--card); /* bg-white equivalent */
+  display: flex; /* Use flex for better control */
+  flex-direction: column; /* Stack items vertically */
+}
+.hackathonCard:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* hover:shadow-lg */
+}
+
+.cardTitle {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  color: var(--foreground); /* text-gray-900 equivalent */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.cardDescription {
+  color: var(--muted-foreground); /* text-gray-600 */
+  margin-bottom: 0.75rem; /* mb-3 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.4; /* Slightly adjusted line-height */
+  flex-grow: 1; /* Allow description to take up space */
+}
+
+.cardDetail {
+  color: var(--foreground); /* text-gray-800 or 700 */
+  margin-bottom: 0.5rem; /* mb-2 */
+  font-size: 0.875rem; /* text-sm */
+}
+
+.detailLabel {
+  font-weight: 600; /* font-semibold */
+}
+
+.cardLeader {
+    color: var(--muted-foreground); /* text-gray-500 */
+    font-size: 0.875rem; /* text-sm */
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+.leaderLink {
+    color: var(--primary); /* Use primary color for link */
+    text-decoration: none;
+}
+.leaderLink:hover {
+    text-decoration: underline;
+    color: color-mix(in srgb, var(--primary) 80%, black); /* Slightly darker on hover */
+}
+
+/* Styles for the Join Button */
+.joinButton {
+  width: 100%; /* Make button full width of its container */
+  margin-top: auto; /* Push to bottom */
+  padding-top: 0.5rem; /* Add space above */
+  /* Apply gradient background */
+  background-image: linear-gradient(to right, var(--primary), var(--accent));
+  color: #000000; /* Use black text like register button */
+  background-color: transparent; /* Remove solid background */
+  /* Padding will come from Button component's size prop (default) */
+  border-radius: 0.375rem; /* rounded - standard button radius */
+  transition: opacity 150ms ease-in-out;
+  border: none;
+  font-weight: 500; /* font-medium (Button default) */
+  cursor: pointer;
+  box-shadow: var(--tw-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)); /* shadow-md */
+  text-align: center; /* Center text */
+  /* Ensure height consistency if needed, Button default is h-10 */
+  height: 2.5rem;
+  display: inline-flex; /* Align text properly */
+  align-items: center;
+  justify-content: center;
+}
+.joinButton:hover {
+  opacity: 0.9;
+  background-color: transparent; /* Keep bg transparent on hover */
+}
+/* No explicit disabled state needed here as it's a link */
+
+
+/* Styles for Tech Stack/Roles Needed tags */
+.tagsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; /* gap-2 */
+    margin-bottom: 0.75rem; /* Increased margin */
+    align-items: baseline; /* Align label with first tag */
+}
+.tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px; /* rounded-full */
+    border: 1px solid var(--border);
+    padding: 0.125rem 0.625rem; /* py-0.5 px-2.5 */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500; /* font-medium */
+    background-color: var(--secondary); /* Muted background */
+    color: var(--secondary-foreground);
+}

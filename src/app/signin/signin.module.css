@@ -1,0 +1,288 @@
+/* src/app/signin/signin.module.css */
+
+/* Page container - centers content and prevents scrolling */
+.pageContainer {
+  height: 100vh; /* Use height instead of min-height */
+  width: 100%;
+  display: flex;
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+  background-color: var(--background); /* Assumes CSS variable from globals.css */
+  padding: 1rem;
+  overflow: hidden; /* Prevent scrolling */
+}
+
+/* Wrapper to constrain width */
+.contentWrapper {
+  width: 100%;
+  max-width: 28rem; /* max-w-md */
+}
+
+/* Card styles */
+.card {
+  box-shadow: var(--tw-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)); /* shadow-md */
+  border-radius: 0.5rem; /* rounded-lg */
+  border: 1px solid var(--border); /* border */
+  overflow: hidden;
+  background-color: var(--card); /* card background */
+}
+
+/* Card Header layout */
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem; /* space-x-2 */
+  padding: 1rem; /* p-4 */
+  border-bottom: 1px solid var(--border); /* border-b */
+}
+
+/* Container for Home Button for spacing adjustment */
+.homeButtonContainer {
+  width: 2.5rem; /* w-10, matches placeholder */
+  flex-shrink: 0;
+  padding-top: 2px; /* pt-0.5, nudges button down slightly */
+}
+
+/* Home Button specific adjustments */
+.homeButton {
+  margin-left: -0.25rem; /* -ml-1 */
+}
+
+/* Home Icon styles */
+.homeIcon {
+  height: 1.25rem; /* h-5 */
+  width: 1.25rem; /* w-5 */
+  color: var(--muted-foreground);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.homeIcon:hover {
+  color: var(--primary);
+}
+
+/* Header Text Container */
+.headerTextContainer {
+  flex-grow: 1; /* Takes up available space */
+  text-align: center;
+  /* space-y-0 */
+}
+.headerTextContainer > *:not([hidden]) ~ *:not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(0px * var(--tw-space-y-reverse));
+}
+
+
+/* Header Title styles */
+.headerTitle {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  background-image: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.25; /* leading-tight */
+}
+
+/* Header Description styles */
+.headerDescription {
+  color: var(--muted-foreground);
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25; /* leading-tight */
+}
+
+/* Placeholder for centering header text */
+.headerPlaceholder {
+  width: 2.5rem; /* w-10 */
+  height: 2.5rem; /* h-10, size doesn't strictly matter, width does */
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+/* Card Content padding */
+.cardContent {
+  padding: 1.5rem; /* p-6 */
+}
+
+/* Form styles */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* space-y-4 */
+}
+
+/* Feedback messages base style */
+.errorMessage, .successMessage {
+  font-size: 0.875rem; /* text-sm */
+  text-align: center;
+  padding: 0.5rem; /* p-2 */
+  border-radius: 0.375rem; /* rounded-md */
+  border-width: 1px;
+}
+/* Error specific styles */
+.errorMessage {
+  color: #dc2626; /* text-red-600 */
+  background-color: #fee2e2; /* bg-red-50 */
+  border-color: #fecaca; /* border-red-200 */
+}
+/* Success specific styles */
+.successMessage {
+  color: #16a34a; /* text-green-600 */
+  background-color: #dcfce7; /* bg-green-50 */
+  border-color: #bbf7d0; /* border-green-200 */
+}
+
+/* Input group */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem; /* space-y-1.5 */
+}
+
+/* Label inherits styles from Shadcn component */
+
+/* Input wrapper for positioning icons */
+.inputWrapper {
+  position: relative;
+}
+
+/* Base Input field styles (size, border, bg, padding, text size) */
+.inputField {
+  height: 2.5rem; /* h-10 */
+  width: 100%;
+  border-radius: 0.375rem; /* Defaults from Input component */
+  border: 1px solid var(--input); /* Defaults from Input component */
+  background-color: var(--background); /* Defaults from Input component */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem; /* text-sm */
+  /* Focus styles handled by Input component, but can be overridden here */
+}
+.inputField:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: var(--ring); /* Ensure --ring is defined in globals.css */
+    border-color: var(--input); /* Keep original border color on focus if desired */
+}
+
+/* Padding for left icon */
+.inputFieldIconPadding {
+  padding-left: 2.5rem; /* pl-10 */
+}
+/* Additional padding for right (password toggle) icon */
+.inputFieldPasswordPadding {
+  padding-right: 2.5rem; /* pr-10 */
+}
+
+/* Icon inside input fields */
+.inputIcon {
+  position: absolute;
+  left: 0.75rem; /* left-3 */
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1rem; /* h-4 */
+  width: 1rem; /* w-4 */
+  color: var(--muted-foreground);
+  pointer-events: none; /* Make sure icon doesn't block input clicks */
+}
+
+/* Password visibility toggle button */
+.passwordToggleButton {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 2.5rem; /* h-10 */
+  width: 2.5rem; /* w-10 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  border-radius: 0.375rem; /* rounded-md */
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.passwordToggleButton:hover {
+  color: var(--foreground);
+}
+/* Focus styles for accessibility */
+.passwordToggleButton:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color); /* Adjusted ring width */
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-offset-width: 1px; /* ring-offset-1 */
+    --tw-ring-color: var(--ring);
+}
+
+/* Icon inside the toggle button */
+.passwordToggleIcon {
+  height: 1rem; /* h-4 */
+  width: 1rem; /* w-4 */
+}
+
+/* Submit Button base styles */
+.submitButtonBase {
+  width: 100%;
+  font-weight: 500; /* font-medium */
+  box-shadow: var(--tw-shadow, 0 1px 2px 0 rgb(0 0 0 / 0.05)); /* shadow-sm */
+  margin-top: 0.5rem; /* mt-2 */
+  /* Height, padding, etc., come from size="lg" prop on Button component */
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-image 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Submit Button active/valid state - NOW WITH GRADIENT */
+.submitButtonActive {
+  background-image: linear-gradient(to right, var(--primary), var(--accent));
+  color: #000000; /* Black text */
+  background-color: transparent; /* Ensure solid color doesn't override gradient */
+}
+.submitButtonActive:hover {
+  opacity: 0.9;
+  background-color: transparent; /* Keep bg transparent on hover */
+}
+
+/* Submit Button disabled/invalid state */
+.submitButtonDisabled {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  cursor: not-allowed;
+  opacity: 0.5; /* Default disabled opacity */
+  background-image: none; /* Ensure no gradient */
+}
+/* Optional: Prevent hover effect when disabled */
+.submitButtonDisabled:hover {
+    background-color: var(--secondary); /* Keep same background on hover */
+    opacity: 0.5; /* Keep opacity */
+}
+
+
+/* Register link container */
+.registerLinkContainer {
+  text-align: center;
+  font-size: 0.875rem; /* text-sm */
+  padding-top: 0.5rem; /* pt-2 */
+}
+
+/* Text part of register link */
+.registerLinkText {
+  color: var(--muted-foreground);
+}
+
+/* Link part of register link */
+.registerLink {
+  font-weight: 500; /* font-medium */
+  color: var(--primary);
+  text-underline-offset: 4px;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.registerLink:hover {
+  /* Equivalent to hover:text-primary/80 */
+  color: color-mix(in srgb, var(--primary) 80%, black);
+  text-decoration-line: underline;
+}
