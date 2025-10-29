@@ -1,0 +1,164 @@
+/* src/app/notifications/notifications.module.css */
+
+.pageContainer {
+  max-width: 56rem; /* max-w-3xl */
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2.5rem; /* mt-10 */
+  padding: 0 1rem; /* Add horizontal padding */
+}
+
+.pageTitle {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 1.5rem; /* mb-6 */
+  text-align: center;
+  color: var(--foreground);
+}
+
+.feedbackText {
+  text-align: center;
+  color: var(--muted-foreground); /* text-gray-500 */
+  margin-top: 2rem; /* mt-8 */
+}
+
+.errorText {
+    color: var(--destructive); /* Use destructive color for errors */
+}
+
+.updateError {
+    margin-bottom: 1rem; /* Add space below update error */
+    padding: 0.5rem;
+    background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--destructive) 30%, transparent);
+    border-radius: 0.375rem;
+}
+
+
+.applicationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* space-y-4 */
+}
+
+.applicationCard {
+  display: flex;
+  flex-direction: column; /* Stack vertically on small screens */
+  justify-content: space-between;
+  align-items: stretch; /* Stretch items full width on small screens */
+  background-color: var(--card); /* bg-white */
+  padding: 1rem; /* p-4 */
+  border-radius: 1rem; /* rounded-2xl */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* shadow-sm */
+  border: 1px solid var(--border);
+}
+/* Flex row layout for medium screens and up */
+@media (min-width: 640px) { /* sm breakpoint or md */
+    .applicationCard {
+        flex-direction: row;
+        align-items: center; /* Vertically align items */
+    }
+}
+
+
+.applicantInfo {
+  flex-grow: 1; /* Allow info section to take available space */
+  margin-bottom: 1rem; /* Add space below info on small screens */
+}
+@media (min-width: 640px) {
+    .applicantInfo {
+        margin-bottom: 0;
+        margin-right: 1rem; /* Add space between info and actions */
+    }
+}
+
+
+.applicantName {
+  font-weight: 500; /* font-medium */
+  font-size: 1.125rem; /* text-lg */
+  color: var(--foreground);
+}
+
+.applicantEmail {
+  font-size: 0.875rem; /* text-sm */
+  color: var(--muted-foreground); /* text-gray-500 */
+}
+
+.hackathonName {
+  font-size: 0.875rem; /* text-sm */
+  color: var(--muted-foreground); /* text-gray-400 */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.skillsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* gap-2 */
+  margin-top: 0.5rem; /* Add some space above skills */
+}
+
+.skillTag {
+  background-color: color-mix(in srgb, var(--primary) 10%, transparent); /* bg-blue-100 */
+  color: var(--primary); /* text-blue-700 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 500; /* font-medium */
+  padding: 0.125rem 0.5rem; /* px-2 py-0.5~py-1 */
+  border-radius: 9999px; /* rounded-full */
+}
+
+.noSkillsText {
+  font-size: 0.75rem; /* text-xs */
+  color: var(--muted-foreground); /* text-gray-400 */
+  font-style: italic;
+}
+
+.actionArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* gap-3 */
+  flex-shrink: 0; /* Prevent action area from shrinking */
+  justify-content: flex-end; /* Align buttons right on small screens initially */
+}
+@media (min-width: 640px) {
+    .actionArea {
+        justify-content: flex-start; /* Reset alignment on larger screens */
+    }
+}
+
+
+.actionButton {
+  /* Inherits base styles from Button component */
+  color: white; /* Ensure text is white */
+  /* Size prop handles padding/height */
+}
+
+.acceptButton {
+  background-color: #22c55e; /* bg-green-500 */
+}
+.acceptButton:hover {
+  background-color: #16a34a; /* hover:bg-green-600 */
+}
+
+.rejectButton {
+  background-color: #ef4444; /* bg-red-500 */
+}
+.rejectButton:hover {
+  background-color: #dc2626; /* hover:bg-red-600 */
+}
+
+.statusBadge {
+  padding: 0.25rem 0.75rem; /* px-3 py-1 */
+  border-radius: 9999px; /* rounded-full */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+}
+
+.statusAccepted {
+  background-color: #dcfce7; /* bg-green-100 */
+  color: #16a34a; /* text-green-700 */
+}
+
+.statusRejected {
+  background-color: #fee2e2; /* bg-red-100 */
+  color: #b91c1c; /* text-red-700 */
+}
