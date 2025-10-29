@@ -1,28 +1,104 @@
 // src/app/hackathon-join/page.tsx
 "use client";
 
-import { useState, Suspense } from "react"; // Added Suspense
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 import styles from './hackathon-join.module.css'; // Import CSS Module
-import { cn } from "@/lib/utils"; // Import cn if needed later
+import { cn } from "@/lib/utils";
+import Link from 'next/link';
+// Import Button if needed (currently using standard button tags)
+// import { Button } from "@/components/ui/button";
+
+// Interface for the hackathon details (used by placeholder)
+interface HackathonDetails {
+    hackathonName: string;
+    leader?: {
+        id: number;
+        name: string;
+    };
+    // Add other fields if needed
+}
+
+// Placeholder Data
+const placeholderHackathonDetails: HackathonDetails = {
+    hackathonName: "AI Innovation Challenge 2025 (Sample)",
+    leader: {
+        id: 101,
+        name: "Alice Johnson (Sample Leader)"
+    }
+};
+// End Placeholder Data
 
 // Inner component to access searchParams
 function HackathonApplicationFormInner() {
   const searchParams = useSearchParams();
-  const hackathonId = searchParams.get("hackathonId");
+  const hackathonId = searchParams.get("hackathonId"); // Still read ID for context
 
+  // State for form data
   const [skills, setSkills] = useState<string[]>([]);
   const [coverNote, setCoverNote] = useState("");
   const [skillInput, setSkillInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // For submission
   const [message, setMessage] = useState<string | null>(null);
 
+  // --- State for Hackathon Details (using placeholder) ---
+  const [hackathonDetails, setHackathonDetails] = useState<HackathonDetails | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(true); // Simulate loading briefly
+  const [detailsError, setDetailsError] = useState<string | null>(null);
+  // --- End State for Hackathon Details ---
+
+  // --- Fetch Hackathon Details Function (Defined but commented out in useEffect) ---
+  /*
+  const fetchDetails = async () => {
+      setDetailsLoading(true);
+      setDetailsError(null);
+      if (!hackathonId) {
+          setDetailsError("Hackathon ID is missing in the URL.");
+          setDetailsLoading(false);
+          return;
+      }
+      try {
+        // *** IMPORTANT: Replace with your actual API endpoint ***
+        const res = await fetch(`/api/hackathons/${hackathonId}`);
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || `Failed to fetch hackathon details (status ${res.status})`);
+        }
+        const data: HackathonDetails = await res.json();
+        setHackathonDetails(data);
+      } catch (error: any) {
+        console.error("Error fetching hackathon details:", error);
+        setDetailsError(error.message || "Could not load hackathon information.");
+      } finally {
+        setDetailsLoading(false);
+      }
+    };
+    */
+  // --- End Fetch Hackathon Details ---
+
+  // Load placeholder data in useEffect
+  useEffect(() => {
+    // --- Option 1: Use Placeholder Data (Active) ---
+    console.log("Using placeholder data for Hackathon ID:", hackathonId); // Log the ID being applied for
+    setHackathonDetails(placeholderHackathonDetails);
+    setDetailsLoading(false); // Stop loading after setting placeholder
+    setDetailsError(null); // Clear any errors
+    // --- End Option 1 ---
+
+    // --- Option 2: Use API Data (Comment out Option 1 and uncomment below) ---
+    /*
+    fetchDetails();
+    */
+    // --- End Option 2 ---
+
+  }, [hackathonId]); // Rerun if ID changes (though only placeholder loads)
+
+
   const addSkill = () => {
-    // Trim input and check if it's not empty and not already in the list
     const trimmedSkill = skillInput.trim();
     if (trimmedSkill && !skills.includes(trimmedSkill)) {
       setSkills([...skills, trimmedSkill]);
-      setSkillInput(""); // Clear input after adding
+      setSkillInput("");
     }
   };
 
@@ -30,6 +106,7 @@ function HackathonApplicationFormInner() {
     setSkills(skills.filter((s) => s !== skillToRemove));
   };
 
+  // --- Submit Handler (Simulated) ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -47,22 +124,34 @@ function HackathonApplicationFormInner() {
         return;
     }
 
+    console.log("Simulating application submission for Hackathon ID:", hackathonId);
+    console.log("Skills:", skills);
+    console.log("Cover Note:", coverNote);
+
+    // Simulate API delay (optional)
+    await new Promise(resolve => setTimeout(resolve, 750));
+
+    // Simulate success
+    setMessage("✅ Application submitted successfully! (Simulation)");
+    setSkills([]);
+    setCoverNote("");
+    setSkillInput("");
+    setLoading(false);
+
+    // --- Original API Call Logic (Commented Out) ---
+    /*
     try {
-      // API endpoint might be /api/applications based on other files, or keep /api/hackathonds
-      const res = await fetch("/api/hackathonds", { // Using original endpoint
+      const res = await fetch("/api/hackathonds", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Token will be read from cookies automatically on server-side API route
         },
-        // Ensure hackathonId is converted to number if required by API
         body: JSON.stringify({ hackathonId: Number(hackathonId), skills, coverNote }),
       });
 
       const data = await res.json();
       if (res.ok) {
         setMessage("✅ Application submitted successfully!");
-        // Clear form fields
         setSkills([]);
         setCoverNote("");
         setSkillInput("");
@@ -75,9 +164,11 @@ function HackathonApplicationFormInner() {
     } finally {
       setLoading(false);
     }
+    */
+    // --- End Original API Call Logic ---
   };
+  // --- End Submit Handler ---
 
-  // Determine message class based on content
   const messageClass = message
     ? message.startsWith("✅")
       ? styles.successMessage
@@ -88,8 +179,23 @@ function HackathonApplicationFormInner() {
     <div className={styles.pageContainer}>
         <form onSubmit={handleSubmit} className={styles.formContainer}>
             <h2 className={styles.formTitle}>Apply to Join Team</h2>
-            {/* Display Hackathon ID for context (optional) */}
-            {hackathonId && <p className={styles.hackathonIdText}>Applying for Hackathon ID: {hackathonId}</p>}
+
+            {/* Display Hackathon Name and Leader */}
+            {detailsLoading && <p className={styles.loadingText}>Loading hackathon details...</p>}
+            {detailsError && <p className={`${styles.errorMessage} ${styles.detailsError}`}>{detailsError}</p>}
+            {hackathonDetails && (
+                <div className={styles.hackathonInfoBox}>
+                    Applying for: <span className={styles.hackathonName}>{hackathonDetails.hackathonName}</span>
+                    {hackathonDetails.leader && (
+                        <>
+                            {' led by '}
+                            <Link href={`/u/${hackathonDetails.leader.id}`} className={styles.leaderLink}>
+                                {hackathonDetails.leader.name}
+                            </Link>
+                        </>
+                    )}
+                </div>
+            )}
 
             {/* Skills Input Section */}
             <div className={styles.inputGroup}>
@@ -102,14 +208,13 @@ function HackathonApplicationFormInner() {
                     onChange={(e) => setSkillInput(e.target.value)}
                     placeholder="Add a skill (e.g., React)"
                     className={styles.skillInputField}
-                    // Add skill on Enter key press
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); }}}
                 />
                 <button
                     type="button"
                     onClick={addSkill}
                     className={styles.addButton}
-                    disabled={!skillInput.trim()} // Disable if input is empty
+                    disabled={!skillInput.trim()}
                 >
                     Add
                 </button>
@@ -128,7 +233,7 @@ function HackathonApplicationFormInner() {
                             className={styles.removeSkillButton}
                             aria-label={`Remove ${skill}`}
                         >
-                            &times; {/* HTML entity for 'x' */}
+                            &times;
                         </button>
                         </span>
                     ))
@@ -152,7 +257,7 @@ function HackathonApplicationFormInner() {
             {/* Submit Button */}
             <button
                 type="submit"
-                disabled={loading || skills.length === 0} // Also disable if no skills added
+                disabled={loading || detailsLoading || !!detailsError || skills.length === 0}
                 className={styles.submitButton}
             >
                 {loading ? "Submitting..." : "Submit Application"}
@@ -165,7 +270,7 @@ function HackathonApplicationFormInner() {
   );
 }
 
-// Wrap the inner component with Suspense for useSearchParams
+// Wrap with Suspense (remains the same)
 export default function HackathonApplicationForm() {
     return (
         <Suspense fallback={<div className={styles.loadingFallback}>Loading form...</div>}>
