@@ -76,8 +76,8 @@ export default function HackathonDashboard() {
 
   // --- API Fetching Function (Defined but not called in useEffect) ---
   async function fetchHackathons() {
-    // setLoading(true); // Reset loading if called
-    // setError(null); // Reset error if called
+    setLoading(true); // Reset loading if called
+    setError(null); // Reset error if called
     try {
       const res = await fetch("/api/hackathonds");
       if (!res.ok) {
@@ -98,15 +98,13 @@ export default function HackathonDashboard() {
 
   useEffect(() => {
     // --- Option 1: Use Placeholder Data (Currently Active) ---
-    setHackathons(placeholderHackathons);
-    setLoading(false); // Set loading to false after setting placeholders
-    setError(null); // Clear any previous errors
+    // setHackathons(placeholderHackathons);
+    // setLoading(false); // Set loading to false after setting placeholders
+    // setError(null); // Clear any previous errors
     // --- End Option 1 ---
 
     // --- Option 2: Use API Data (Comment out Option 1 and uncomment below) ---
-    /*
     fetchHackathons();
-    */
     // --- End Option 2 ---
 
   }, []); // Empty dependency array means this runs once on mount
@@ -186,7 +184,7 @@ export default function HackathonDashboard() {
           {hackathon.rolesNeeded && hackathon.rolesNeeded.length > 0 && (
              <div className={styles.tagsContainer}>
               <span className={styles.detailLabel}>Roles:</span>
-              {hackathon.rolesNeeded.map(role => <span key={role} className={styles.tag}>{role}</span>)}
+              {hackathon.rolesNeeded.map((role,index) => <span key={index} className={styles.tag}>{role}</span>)}
             </div>
            )}
 

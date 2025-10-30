@@ -1,13 +1,17 @@
 import { prisma } from "@/lib/prisma";
 
-export async function PUT(req, { params }) {
+export async function POST(req, { params }) {
   try {
     const { id } = params;
     const { status } = await req.json(); // 'accept' or 'reject'
-    // ✅ 1. Find the application with its related hackathon & applicant
+
+    // 1️⃣ Find application with related hackathon + applicant
     const application = await prisma.application.findUnique({
       where: { id: Number(id) },
-      include: { hackathon: true, applicant: true },
+      include: {
+        hackathon: true,
+        applicant: true,
+      },
     });
 
     if (!application) {
@@ -16,7 +20,7 @@ export async function PUT(req, { params }) {
       });
     }
 
-    // ✅ 2. Handle acceptance
+    // 2️⃣ Handle acceptance
     if (status === "accepted") {
       // Update application status
       await prisma.application.update({
@@ -24,59 +28,82 @@ export async function PUT(req, { params }) {
         data: { status: "accepted" },
       });
 
-      // Find team for the hackathon
-      const team = await prisma.team.findUnique({
+      // ✅ Check if a team already exists for this hackathon
+      let team = await prisma.team.findUnique({
         where: { hackathonId: application.hackathonId },
       });
 
-      // If team exists, add the applicant as a member
-      if (team) {
-        // Avoid duplicate addition
-        const alreadyMember = await prisma.teamMember.findUnique({
-          where: {
-            teamId_userId: {
-              teamId: team.id,
-              userId: application.applicantId,
-            },
+      // ✅ If no team exists, create one and make the leader the creator
+      if (!team) {
+        team = await prisma.team.create({
+          data: {
+            hackathonId: application.hackathonId,
+            leaderId: application.hackathon.leaderId, // assuming hackathon has leaderId
+            teamName: `${application.hackathon.userId} Team`,
           },
         });
 
-        if (!alreadyMember) {
-          await prisma.teamMember.create({
-            data: {
-              teamId: team.id,
-              userId: application.applicantId,
-            },
-          });
-        }
+        // Add leader to teamMembers
+        await prisma.teamMember.create({
+          data: {
+            teamId: team.id,
+            userId: application.hackathon.leaderId,
+          },
+        });
+      }
+
+      // ✅ Add the accepted applicant to the team if not already a member
+      const existingMember = await prisma.teamMember.findUnique({
+        where: {
+          teamId_userId: {
+            teamId: team.id,
+            userId: application.applicantId,
+          },
+        },
+      });
+
+      if (!existingMember) {
+        await prisma.teamMember.create({
+          data: {
+            teamId: team.id,
+            userId: application.applicantId,
+          },
+        });
       }
 
       return new Response(
-        JSON.stringify({ message: "Application accepted & team updated" }),
+        JSON.stringify({
+          message: "Application accepted, team updated successfully",
+          teamId: team.id,
+        }),
         { status: 200 }
       );
     }
 
-    // ✅ 3. Handle rejection
+    // 3️⃣ Handle rejection
     if (status === "rejected") {
       await prisma.application.update({
         where: { id: Number(id) },
         data: { status: "rejected" },
       });
 
-      return new Response(JSON.stringify({ message: "Application rejected" }), {
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({ message: "Application rejected" }),
+        { status: 200 }
+      );
     }
 
-    // Invalid status
-    return new Response(JSON.stringify({ error: "Invalid status" }), {
+    // ❌ Invalid status
+    return new Response(JSON.stringify({ error: "Invalid status value" }), {
       status: 400,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating application:", error);
     return new Response(
-      JSON.stringify({ error: "Internal Server Error", details: error.message }),
+      JSON.stringify({
+        error: "Internal Server Error",
+        details: error.message,
+      }),
       { status: 500 }
     );
   }

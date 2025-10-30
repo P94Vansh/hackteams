@@ -1,216 +1,253 @@
-// src/app/notifications/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import axios from "axios"; // Keep axios imported for API calls
-import styles from './notifications.module.css';
+import axios from "axios";
+import styles from "./notifications.module.css";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-// Interface remains the same
 interface Applicant {
   id: number;
   applicant: {
+    id: number;
     name: string;
     email: string;
   };
-  applicantSkills: string[];
-  status: string; // 'pending', 'accepted', 'rejected'
+  applicantSkills?: string[];
+  status: string;
   hackathon: {
     hackathonName: string;
   };
 }
 
-// --- Placeholder Data ---
-const placeholderApplications: Applicant[] = [
-    {
-        id: 101,
-        applicant: { name: "Charlie Davis", email: "charlie.d@example.edu" },
-        applicantSkills: ["React", "Node.js", "MongoDB"],
-        status: "pending",
-        hackathon: { hackathonName: "AI Innovation Challenge 2025" }
-    },
-    {
-        id: 102,
-        applicant: { name: "Eva Martinez", email: "eva.m@example.org" },
-        applicantSkills: ["Python", "Data Analysis", "SQL", "Tableau"],
-        status: "pending",
-        hackathon: { hackathonName: "AI Innovation Challenge 2025" }
-    },
-    {
-        id: 103,
-        applicant: { name: "Frank Green", email: "frank.g@sample.net" },
-        applicantSkills: ["Solidity", "Hardhat", "Web3.js"],
-        status: "accepted",
-        hackathon: { hackathonName: "Web3 Builders Hack" }
-    },
-    {
-        id: 104,
-        applicant: { name: "Grace Hall", email: "grace.h@mail.dev" },
-        applicantSkills: ["UI/UX Design", "Figma", "User Research"],
-        status: "rejected",
-        hackathon: { hackathonName: "Sustainable Tech Hackathon" }
-    }
-];
-// --- End Placeholder Data ---
+interface MyApplication {
+  id: number;
+  status: string;
+    hackathonName: string;
+    teamName:string;
+}
 
+interface TeamStatus {
+  hackathonName: string;
+  teamName: string;
+  statusMessage: string;
+}
 
 export default function ApplicantsPage() {
-  const [applications, setApplications] = useState<Applicant[]>([]);
-  const [loading, setLoading] = useState(true); // Still use loading state briefly
+  const [leaderApplications, setLeaderApplications] = useState<Applicant[]>([]);
+  const [myApplications, setMyApplications] = useState<MyApplication[]>([]);
+  const [teamStatuses, setTeamStatuses] = useState<TeamStatus[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- API Fetching Function (Defined but not called in useEffect) ---
+  // ✅ Fetch notifications (both perspectives)
   const fetchApplications = async () => {
-    // setLoading(true); // Reset loading if called
-    // setError(null); // Reset error on fetch
     try {
-      const res = await axios.get("/api/status"); // API endpoint
-      setApplications(res.data.data || []); // Ensure it defaults to an empty array
-    } catch (err: any) { // Type error
+      const res = await axios.get("/api/status");
+      const data = res.data || {};
+      console.log(res.data)
+      setLeaderApplications(data.leaderApplications || []);
+      setMyApplications(data.myApplications || []);
+      setTeamStatuses(data.teamStatuses || []);
+      console.log("Fetched Notifications:", data);
+    } catch (err: any) {
       console.error("Error fetching applications:", err);
-      setError(`Failed to load applications: ${err.response?.data?.error || err.message}`); // Set error message
+      setError(`Failed to load notifications: ${err.response?.data?.error || err.message}`);
     } finally {
       setLoading(false);
     }
   };
-  // --- End API Fetching Function ---
-
 
   useEffect(() => {
-    // --- Option 1: Use Placeholder Data (Currently Active) ---
-    setApplications(placeholderApplications);
-    setLoading(false); // Set loading false after setting placeholders
-    setError(null); // Clear errors
-    // --- End Option 1 ---
-
-    // --- Option 2: Use API Data (Comment out Option 1 and uncomment below) ---
-    /*
     fetchApplications();
-    */
-    // --- End Option 2 ---
+  }, []);
 
-  }, []); // Empty dependency array means this runs once on mount
-
-
-  // --- Update Status Function (Simulated) ---
+  // ✅ Accept / Reject handler
   const updateStatus = async (id: number, status: "accepted" | "rejected") => {
-    setError(null); // Clear previous errors
-    console.log(`Simulating update for application ${id} to status: ${status}`);
+    setError(null);
+    const original = [...leaderApplications];
 
-    // Simulate API delay (optional)
-    // await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Update local state directly
-    setApplications((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, status } : app))
-    );
-
-    // Comment out the actual API call
-    /*
-    // Optimistic UI update (optional but improves perceived performance)
-    const originalApplications = [...applications];
-    setApplications((prev) =>
+    // Optimistic update
+    setLeaderApplications((prev) =>
       prev.map((app) => (app.id === id ? { ...app, status } : app))
     );
 
     try {
-      console.log(`Updating application ${id} to status: ${status}`);
-      // API endpoint/route.ts]
-      await axios.put(`/api/applications/${id}`, { status });
-      // If successful, the optimistic update is correct.
+      await axios.post(`/api/applications/${id}`, { status });
     } catch (err) {
       console.error("Error updating status:", err);
-      // Revert UI on error
-      setApplications(originalApplications);
-      setError(`Failed to update status for application ${id}. Please try again.`); // Show error
+      setLeaderApplications(original);
+      setError(`Failed to update status for application ${id}. Please try again.`);
     }
-    */
   };
-  // --- End Update Status Function ---
 
-
-  // --- Render Logic (Remains the same) ---
+  // --- Render Logic ---
   if (loading) {
-    return <p className={styles.feedbackText}>Loading applicants...</p>;
+    return <p className={styles.feedbackText}>Loading notifications...</p>;
   }
 
-  if (error && applications.length === 0) { // Show fetch error only if list is empty
-      return <p className={`${styles.feedbackText} ${styles.errorText}`}>{error}</p>;
+  if (
+    error &&
+    leaderApplications.length === 0 &&
+    myApplications.length === 0 &&
+    teamStatuses.length === 0
+  ) {
+    return <p className={`${styles.feedbackText} ${styles.errorText}`}>{error}</p>;
   }
 
-  if (applications.length === 0) {
-    return <p className={styles.feedbackText}>No applications found.</p>;
+  if (
+    leaderApplications.length === 0 &&
+    myApplications.length === 0 &&
+    teamStatuses.length === 0
+  ) {
+    return <p className={styles.feedbackText}>No notifications found.</p>;
   }
 
   return (
     <div className={styles.pageContainer}>
-      <h1 className={styles.pageTitle}>Applicants</h1>
+      <h1 className={styles.pageTitle}>Notifications</h1>
 
-      {/* Display update error if it occurred */}
-      {error && applications.length > 0 && (
-           <p className={`${styles.feedbackText} ${styles.errorText} ${styles.updateError}`}>{error}</p>
+      {error && (
+        <p className={`${styles.feedbackText} ${styles.errorText} ${styles.updateError}`}>
+          {error}
+        </p>
       )}
 
+      {/* ✅ Section 1 — Requests You Received */}
+      {leaderApplications.length > 0 && (
+        <>
+          <h2 className={styles.sectionTitle}>Requests You Received</h2>
+          <div className={styles.applicationsList}>
+            {leaderApplications.map((app) => (
+              <div key={app.id} className={styles.applicationCard}>
+                <div className={styles.applicantInfo}>
+                  <Link href={`/u/${app.applicant.id}`}>
+                    <p className={styles.applicantName}>{app.applicant.name}</p>
+                  </Link>
+                  <p className={styles.applicantEmail}>{app.applicant.email}</p>
+                  <p className={styles.hackathonName}>
+                    For: {app.hackathon.hackathonName}
+                  </p>
 
-      <div className={styles.applicationsList}>
-        {applications.map((app) => (
-          <div key={app.id} className={styles.applicationCard}>
-            {/* Applicant Info */}
-            <div className={styles.applicantInfo}>
-              <p className={styles.applicantName}>{app.applicant.name}</p>
-              <p className={styles.applicantEmail}>{app.applicant.email}</p>
-              <p className={styles.hackathonName}>
-                For: {app.hackathon.hackathonName}
-              </p>
+                  <div className={styles.skillsContainer}>
+                    {app.applicantSkills && app.applicantSkills.length > 0 ? (
+                      app.applicantSkills.map((skill, index) => (
+                        <span key={index} className={styles.skillTag}>
+                          {skill}
+                        </span>
+                      ))
+                    ) : (
+                      <p className={styles.noSkillsText}>No skills provided</p>
+                    )}
+                  </div>
+                </div>
 
-              {/* Display Skills */}
-              <div className={styles.skillsContainer}>
-                {app.applicantSkills && app.applicantSkills.length > 0 ? (
-                  app.applicantSkills.map((skill, index) => (
-                    <span key={index} className={styles.skillTag}>
-                      {skill}
+                <div className={styles.actionArea}>
+                  {app.status === "pending" ? (
+                    <>
+                      <Button
+                        className={cn(styles.actionButton, styles.acceptButton)}
+                        onClick={() => updateStatus(app.id, "accepted")}
+                        size="sm"
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        className={cn(styles.actionButton, styles.rejectButton)}
+                        onClick={() => updateStatus(app.id, "rejected")}
+                        size="sm"
+                      >
+                        Reject
+                      </Button>
+                    </>
+                  ) : (
+                    <span
+                      className={cn(
+                        styles.statusBadge,
+                        app.status === "accepted"
+                          ? styles.statusAccepted
+                          : styles.statusRejected
+                      )}
+                    >
+                      {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                     </span>
-                  ))
-                ) : (
-                  <p className={styles.noSkillsText}>No skills provided</p>
-                )}
-              </div>
-            </div>
-
-            {/* Actions / Status Display */}
-            <div className={styles.actionArea}>
-              {app.status === "pending" ? (
-                <>
-                  <Button
-                    className={cn(styles.actionButton, styles.acceptButton)}
-                    onClick={() => updateStatus(app.id, "accepted")}
-                    size="sm"
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    className={cn(styles.actionButton, styles.rejectButton)}
-                    onClick={() => updateStatus(app.id, "rejected")}
-                    size="sm"
-                  >
-                    Reject
-                  </Button>
-                </>
-              ) : (
-                <span
-                  className={cn(
-                    styles.statusBadge,
-                    app.status === "accepted" ? styles.statusAccepted : styles.statusRejected
                   )}
-                >
-                  {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-                </span>
-              )}
-            </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+
+      {/* ✅ Section 2 — Your Join Requests */}
+      {myApplications.length > 0 && (
+  <>
+    <h2 className={styles.sectionTitle}>Your Join Requests</h2>
+    <div className={styles.applicationsList}>
+      {myApplications.map((app) => (
+        <div key={app.id} className={styles.applicationCard}>
+          <div className={styles.applicantInfo}>
+            <p className={styles.hackathonName}>
+              Hackathon: {app.hackathonName}
+            </p>
+            <p className={styles.teamName}>
+              Team: {app.teamName}
+            </p>
+          </div>
+
+          <div className={styles.actionArea}>
+            <span
+              className={cn(
+                styles.statusBadge,
+                app.status === "accepted"
+                  ? styles.statusAccepted
+                  : app.status === "rejected"
+                  ? styles.statusRejected
+                  : styles.statusPending
+              )}
+            >
+              {app.status === "accepted" && (
+                <>✅ {app.teamName} accepted your request</>
+              )}
+              {app.status === "rejected" && (
+                <>❌ {app.teamName} rejected your request</>
+              )}
+              {app.status === "pending" && (
+                <>⏳ Waiting for {app.teamName} to respond</>
+              )}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </>
+)}
+
+
+      {/* ✅ Section 3 — Team Responses (Accepted / Rejected) */}
+      {teamStatuses.length > 0 && (
+        <>
+          <h2 className={styles.sectionTitle}>Team Responses</h2>
+          <div className={styles.applicationsList}>
+            {teamStatuses.map((team, index) => (
+              <div key={index} className={styles.applicationCard}>
+                <div className={styles.applicantInfo}>
+                  <p className={styles.hackathonName}>
+                    {team.statusMessage}
+                  </p>
+                  <p className={styles.hackathonName}>
+                    Hackathon: {team.hackathonName}
+                  </p>
+                  <p className={styles.hackathonName}>
+                    Team: {team.teamName}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -130,12 +130,9 @@ const Index = () => {
             </p>
             <div className={cn("flex flex-col sm:flex-row gap-4 justify-center", styles.heroActions)}>
               <Button asChild variant="outline" size="lg" className="text-lg px-8 py-3 border-gray-400 text-gray-200 hover:bg-white/10 hover:border-white hover:text-white">
-                <Link href="/teams">
+                <Link href="/hackathon-dash">
                   Find Teams <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-3 border-gray-400 text-gray-200 hover:bg-white/10 hover:border-white hover:text-white">
-                <Link href="/events">Browse Events</Link>
               </Button>
             </div>
           </div>
@@ -196,10 +193,9 @@ const Index = () => {
                  <div className={cn(styles.featureIconWrapper, styles.featureIconAccentBg)}>
                    <Calendar className="h-8 w-8 text-accent" />
                  </div>
-                 <h3 className={styles.featureTitle}>Discover Events</h3>
+                 <h3 className={styles.featureTitle}>Discover Mates</h3>
                  <p className={styles.featureDescription}>
-                   Find hackathons at top universities across the country. Filter by
-                   technology, location, and dates to find your perfect event.
+                   A smart team-matching platform that connects participants with complementary skills to build stronger hackathon teams.
                  </p>
                </CardContent>
              </Card>
@@ -219,41 +215,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Events Section - RESTORED MAPPING */}
-      <section className={cn(styles.sectionPadding, "bg-muted/50")}>
-        <div className="container mx-auto">
-           <div className="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
-             <h2 className="text-3xl lg:text-4xl font-bold text-center sm:text-left">Featured Events</h2>
-             <Button variant="ghost" asChild className="text-primary hover:text-primary/80">
-               <Link href="/events">View All Events <ArrowRight className="ml-2 h-4 w-4" /></Link>
-             </Button>
-           </div>
-           {/* ** This is where the events are mapped ** */}
-           <div className="grid md:grid-cols-2 gap-8">
-             {featuredEvents.map((event) => (
-               <EventCard key={event.id} {...event} />
-             ))}
-           </div>
-        </div>
-      </section>
 
-      {/* Featured Teams Section - RESTORED MAPPING */}
-      <section className={styles.sectionPadding}>
-         <div className="container mx-auto">
-           <div className="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
-             <h2 className="text-3xl lg:text-4xl font-bold text-center sm:text-left">Find Teammates</h2>
-             <Button variant="ghost" asChild className="text-primary hover:text-primary/80">
-               <Link href="/teams">View All Posts <ArrowRight className="ml-2 h-4 w-4" /></Link>
-             </Button>
-           </div>
-           {/* ** This is where the team posts are mapped ** */}
-           <div className="grid md:grid-cols-2 gap-8">
-              {featuredTeamPosts.map((post) => (
-                <TeamPostCard key={post.id} {...post} />
-              ))}
-           </div>
-         </div>
-       </section>
 
       {/* CTA Section */}
       <section className={styles.ctaSection}>
@@ -270,7 +232,7 @@ const Index = () => {
               Sign Up Free
             </Button>
             <Button asChild size="lg" variant="outline" className="text-lg px-8 py-3 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors">
-              <Link href="/teams">Explore Teams</Link>
+              <Link href="/hackathon-dash">Explore Teams</Link>
             </Button>
           </div>
         </div>
@@ -283,26 +245,19 @@ const Index = () => {
             {/* Footer Columns... (keep as is) */}
              <div>
                <div className="flex items-center space-x-2 mb-4">
-                 <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                   <span className="text-primary-foreground font-bold text-lg">H</span>
-                 </div>
-                 <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                 <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-black">
                    HackTeams
                  </span>
                </div>
                <p className="text-muted-foreground text-sm leading-relaxed">
                  The ultimate platform for college hackathon team formation and collaboration.
                </p>
-                <div className="flex gap-4 mt-4">
-                  <a href="#" aria-label="GitHub" className="text-muted-foreground hover:text-foreground transition-colors"><Github className="h-5 w-5"/></a>
-                </div>
              </div>
              <div>
                <h4 className="font-semibold text-foreground mb-4">Platform</h4>
                <nav className="flex flex-col space-y-2 text-sm">
-                 <Link href="/events" className="text-muted-foreground hover:text-foreground transition-colors">Events</Link>
-                 <Link href="/teams" className="text-muted-foreground hover:text-foreground transition-colors">Teams</Link>
-                 <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">Dashboard</Link>
+                 <Link href="/hackathon-dash" className="text-muted-foreground hover:text-foreground transition-colors">Teams</Link>
+                 <Link href="/notifications" className="text-muted-foreground hover:text-foreground transition-colors">Notifications</Link>
                  <Link href="/profile" className="text-muted-foreground hover:text-foreground transition-colors">Profile</Link>
                </nav>
              </div>

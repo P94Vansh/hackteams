@@ -40,9 +40,6 @@ const Header = () => {
                 {/* Actions */}
                 <div className="flex items-center space-x-3">
                     <div className="hidden md:flex items-center space-x-2">
-                        <Button variant="ghost" size="icon" aria-label="Search">
-                            <Search className="h-5 w-5" />
-                        </Button>
                         <Button variant="ghost" size="icon" aria-label="Notifications">
                             <Link href={'/notifications'}>
                             <Bell className="h-5 w-5" />
@@ -50,32 +47,11 @@ const Header = () => {
                         </Button>
 
                         {/* Dropdown Menu for Profile & Main Nav */}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" aria-label="User Menu">
-                              <User className="h-5 w-5" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          {/* === ADDED bg-white HERE === */}
-                          <DropdownMenuContent align="end" className={cn("w-48", "bg-white")}> {/* Explicitly set background to white */}
-                            <DropdownMenuItem asChild>
-                              <Link href="/profile">Profile</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link href="/teams">Find Teams</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link href="/dashboard">Dashboard</Link>
-                            </DropdownMenuItem>
-                            {/* Optional Separator */}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              {/* Add Logout functionality here later */}
-                              Log out
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                          {/* === END OF CHANGE === */}
-                        </DropdownMenu>
+                        <Button variant="ghost" size="icon" aria-label="User Menu">
+                            <Link href={'/profile'}>
+                            <User className="h-5 w-5" />
+                            </Link>
+                        </Button>
                         {/* End Dropdown Menu */}
 
                         <Button variant="outline" size="sm">
@@ -105,12 +81,6 @@ const Header = () => {
                            Profile
                         </Link>
                         {/* You might still want quick access links here */}
-                        <Link href="/teams" className="text-foreground/80 hover:text-foreground transition-colors" onClick={handleMobileLinkClick}>
-                            Find Teams
-                        </Link>
-                        <Link href="/dashboard" className="text-foreground/80 hover:text-foreground transition-colors" onClick={handleMobileLinkClick}>
-                            Dashboard
-                        </Link>
                          <DropdownMenuSeparator /> {/* Optional separator */}
                         <Button variant="outline" className="w-full">
                             Sign In

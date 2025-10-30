@@ -8,82 +8,87 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  email       String        @unique
-  password    String
-  name        String
-  university  String?
-  course      String?
-  year        String?
-  location    String?
-  bio         String?
-  github      String?
-  portfolio   String?
-  createdAt   DateTime      @default(now())
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  name       String
+  university String?
+  course     String?
+  year       String?
+  location   String?
+  bio        String?
+  github     String?
+  portfolio  String?
+  createdAt  DateTime @default(now())
 
-  skills       String[]   @default([])
-  interests    String[]   @default([])
+  skills       String[]      @default([])
+  interests    String[]      @default([])
   projects     Project[]
   achievements Achievement[]
-  hackathonsCreated Hackathon[] @relation("HackathonLeader")
-   applications      Application[]
-  teamsLed          Team[]      @relation("LeaderTeams")
-  teamMemberships   TeamMember[]
-
+  leaderTeams  Team[]        @relation("LeaderTeams")
+  teamMembers  TeamMember[]
+  applications Application[]
+  hackathons   Hackathon[]   @relation("UserHackathons")
 }
+
 model Project {
-  id           Int      @id @default(autoincrement())
-  name         String
-  bio          String
-  skills       String[] @default([])
-  createdById  Int
-  createdBy    User     @relation(fields: [createdById], references: [id])
+  id          Int      @id @default(autoincrement())
+  name        String
+  bio         String
+  skills      String[] @default([])
+  createdById Int
+  createdBy   User     @relation(fields: [createdById], references: [id])
 }
 
 model Achievement {
-  id            Int      @id @default(autoincrement())
-  name          String
-  month         String
-  year          String
-  achievedById  Int
-  achievedBy    User     @relation(fields: [achievedById], references: [id])
+  id           Int    @id @default(autoincrement())
+  name         String
+  month        String
+  year         String
+  achievedById Int
+  achievedBy   User   @relation(fields: [achievedById], references: [id])
 }
+
 enum TeamStatus {
   active
   submitted
   disbanded
 }
+
 enum ApplicationStatus {
   pending
   accepted
   rejected
   withdrawn
 }
+
 model Hackathon {
-  id                   Int        @id @default(autoincrement())
+  id                   Int      @id @default(autoincrement())
   userId               Int
-  hackathonName        String      /// Name of the hackathon:-sih,dhisa coer etc
-  hackathonDescription String     // deadline, duration, etc.
+  hackathonName        String
+  hackathonDescription String
   problemStatement     String
   teamSize             Int
-  createdAt            DateTime   @default(now())
+  createdAt            DateTime @default(now())
+  techStack            String[]
+  rolesNeeded          String[]
+  leaderId             Int
 
-  
-  leader       User          @relation("HackathonLeader", fields: [userId], references: [id])
+  leader     User       @relation("UserHackathons", fields: [leaderId], references: [id])
+  teams      Team[]
   applications Application[]
-  team         Team?
 }
-model Team {
-  id        Int        @id @default(autoincrement())
-  hackathonId    Int         @unique
-  leaderId  Int
-  status    TeamStatus @default(active)
-  repoLink  String?
-  createdAt DateTime   @default(now())
 
-  
-  hackathon Hackathon   @relation(fields: [hackathonId], references: [id])
-  leader    User        @relation("LeaderTeams", fields: [leaderId], references: [id])
+model Team {
+  id          Int        @id @default(autoincrement())
+  hackathonId Int        @unique
+  leaderId    Int
+  teamName     String  
+  status      TeamStatus @default(active)
+  createdAt   DateTime   @default(now())
+
+  hackathon Hackathon    @relation(fields: [hackathonId], references: [id])
+  leader    User         @relation("LeaderTeams", fields: [leaderId], references: [id])
   members   TeamMember[]
 }
 
@@ -95,19 +100,17 @@ model TeamMember {
   team Team @relation(fields: [teamId], references: [id])
   user User @relation(fields: [userId], references: [id])
 
-  @@id([teamId, userId]) 
+  @@id([teamId, userId])
 }
-  
 
 model Application {
   id              Int               @id @default(autoincrement())
-  hackathonId          Int
+  hackathonId     Int
   applicantId     Int
   applicantSkills String[]          @default([])
   coverNote       String?
   status          ApplicationStatus @default(pending)
   submittedAt     DateTime          @default(now())
-
 
   hackathon Hackathon @relation(fields: [hackathonId], references: [id])
   applicant User      @relation(fields: [applicantId], references: [id])

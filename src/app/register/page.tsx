@@ -1,6 +1,7 @@
 // src/app/register/page.tsx
 'use client'
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 // Import UI components
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 import styles from './register.module.css'; // Import the CSS module
 
 const Register = () => {
+  const router=useRouter()
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -68,6 +70,7 @@ const Register = () => {
       }); //
 
       setSuccess("Account created successfully!");
+      router.push("/signin")
       console.log("API response:", response.data);
       // Optional: Clear form or redirect
       // setFormData({ name: "", email: "", ... initial state ... });

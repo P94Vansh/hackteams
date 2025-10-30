@@ -38,9 +38,11 @@ interface Team {
     active: boolean; // Assuming this exists based on original code
 }
 interface TeamMember {
-  team: Team;
+  teamName:string;
   role: string;
-  userId: number; // Assuming this exists based on original code
+  hackathonName:string;
+  teamId:string;
+   // Assuming this exists based on original code
 }
 interface Achievement {
   id: number;
@@ -140,14 +142,15 @@ export default function ProfilePage() {
 
     const fetchRelatedData = async () => {
       try {
-        const [projectsRes, achievementsRes] = await Promise.all([
+        const [projectsRes, achievementsRes,teamsRes] = await Promise.all([
           axios.get("/api/projects"),
           axios.get("/api/achievements"),
-          // axios.get("/api/teams"), // Still assuming GET /api/teams might not exist
+          axios.get("/api/teams"), // Still assuming GET /api/teams might not exist
         ]);
         setProjects(projectsRes.data || []);
         setAchievements(achievementsRes.data || []);
-        // setTeams([]);
+        setTeams(teamsRes.data || []);
+        console.log(teamsRes.data)
       } catch (err) {
         console.error("Error fetching related profile data:", err);
         setLoadingError((prev) => (prev ? prev + " Also failed to load projects/achievements." : "Could not load projects and achievements."));
@@ -157,17 +160,11 @@ export default function ProfilePage() {
 
     useEffect(() => {
       // --- Option 1: Use Placeholder Data (Currently Active) ---
-      setUserInfo(placeholderUserInfo);
-      setProjects(placeholderProjects);
-      setTeams(placeholderTeams);
-      setAchievements(placeholderAchievements);
       // --- End Option 1 ---
 
       // --- Option 2: Use API Data (Comment out Option 1 and uncomment below) ---
-      /*
       fetchUserInfo();
       fetchRelatedData();
-      */
       // --- End Option 2 ---
 
     }, []);
@@ -191,22 +188,6 @@ export default function ProfilePage() {
         }
       };
 
-    const handleAddTeam = async (e: React.FormEvent) => {
-        e.preventDefault();
-        console.warn("Attempting to POST to /api/teams - this endpoint may not exist.");
-        try {
-          const res = await axios.post("/api/teams", newTeam); // Target API endpoint
-          console.log("Team add response:", res.data);
-          // Refresh data or update state based on actual API response
-          // fetchRelatedData(); // Example: Refetch all related data
-          setTeams([...teams, res.data]); // Example: Directly add (adjust based on response)
-          setNewTeam({ teamName: "", hackathonName: "", role: "" });
-          setIsTeamDialogOpen(false);
-        } catch (err) {
-          console.error("Error adding team:", err);
-           // TODO: Show specific error in UI
-        }
-      };
 
     const handleAddAchievement = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -355,40 +336,12 @@ export default function ProfilePage() {
             <Card className={styles.card}>
                 <CardHeader className={styles.sectionHeader}>
                     <CardTitle className={styles.sectionTitle}>Teams</CardTitle>
-                    <Dialog open={isTeamDialogOpen} onOpenChange={setIsTeamDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" className={styles.addButton}>
-                                <Plus className={styles.addIcon} /> Add
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className={styles.dialogContent}>
-                            <DialogHeader><DialogTitle>Add New Team</DialogTitle></DialogHeader>
-                            <form onSubmit={handleAddTeam} className={styles.dialogForm}>
-                                <div className={styles.dialogInputGroup}>
-                                    <Label htmlFor="teamName">Team Name</Label>
-                                    <Input id="teamName" placeholder="Team Alpha" value={newTeam.teamName} onChange={(e) => setNewTeam({ ...newTeam, teamName: e.target.value })} required />
-                                </div>
-                                <div className={styles.dialogInputGroup}>
-                                    <Label htmlFor="hackathonName">Hackathon Name</Label>
-                                    <Input id="hackathonName" placeholder="e.g., SIH 2024" value={newTeam.hackathonName} onChange={(e) => setNewTeam({ ...newTeam, hackathonName: e.target.value })} required />
-                                </div>
-                                <div className={styles.dialogInputGroup}>
-                                    <Label htmlFor="teamRole">Your Role</Label>
-                                    <Input id="teamRole" placeholder="e.g., Frontend Developer" value={newTeam.role} onChange={(e) => setNewTeam({ ...newTeam, role: e.target.value })} required/>
-                                </div>
-                                <DialogFooter className={styles.dialogFooter}>
-                                    <DialogClose asChild><Button type="button" variant="ghost">Cancel</Button></DialogClose>
-                                    <Button type="submit">Save Team</Button>
-                                </DialogFooter>
-                            </form>
-                        </DialogContent>
-                    </Dialog>
                 </CardHeader>
                 <CardContent className={styles.sectionContent}>
                      {teams.length > 0 ? teams.map((t, index) => (
-                        <div key={t.team.id || index} className={styles.listItem}>
-                            <h3 className={styles.listItemTitle}>{t.team.teamName}</h3>
-                            <p className={styles.listItemDescription}>Hackathon: {t.team.hackathonName}</p>
+                        <div key={t.teamId || index} className={styles.listItem}>
+                            <p className={styles.listItemTitle}>TeamName: {t.teamName}</p>
+                            <p className={styles.listItemDescription}>Hackathon: {t.hackathonName}</p>
                             <p className={styles.listItemDescription}>Role: {t.role}</p>
                         </div>
                     )) : (

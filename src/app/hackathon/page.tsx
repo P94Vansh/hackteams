@@ -6,6 +6,7 @@ import styles from './hackathon.module.css'; // Import the CSS module
 export default function HackathonForm() {
   const [formData, setFormData] = useState({
     hackathonName: "",
+    teamName:"",
     hackathonDescription: "", // Corresponds to 'Your Idea'
     problemStatement: "",
     teamSize: "",
@@ -30,9 +31,12 @@ export default function HackathonForm() {
     // Prepare data for API - *EXCLUDE* techStack and rolesNeeded
     const apiData = {
         hackathonName: formData.hackathonName,
+        teamName:formData.teamName,
         hackathonDescription: formData.hackathonDescription,
         problemStatement: formData.problemStatement,
         teamSize: Number(formData.teamSize) || 0,
+        rolesNeeded:formData.rolesNeeded.split(","),
+        techStack:formData.techStack.split(",")
         // techStack and rolesNeeded are NOT included here
     };
 
@@ -55,12 +59,13 @@ export default function HackathonForm() {
         throw new Error(data.error || "Failed to create hackathon team posting");
       }
 
-      setMessage("✅ Hackathon team posting created successfully! (Tech/Roles not saved)"); // Updated message
+      setMessage("✅ Hackathon team posting created successfully!"); // Updated message
       // Clear the form on success, including new fields
       setFormData({
         hackathonName: "",
         hackathonDescription: "",
         problemStatement: "",
+        teamName:"",
         teamSize: "",
         techStack: "", // Clear techStack
         rolesNeeded: "", // Clear rolesNeeded
@@ -96,6 +101,20 @@ export default function HackathonForm() {
             required
             className={styles.inputField}
             placeholder="e.g., Smart India Hackathon 2025"
+          />
+        </div>
+        {/* Team Name */}
+        <div className={styles.inputGroup}>
+          <label htmlFor="teamName" className={styles.label}>Team Name</label>
+          <input
+            id="teamName"
+            type="text"
+            name="teamName"
+            value={formData.teamName}
+            onChange={handleChange}
+            required
+            className={styles.inputField}
+            placeholder="e.g., Akatsuki"
           />
         </div>
 

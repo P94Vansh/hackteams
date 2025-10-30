@@ -48,7 +48,6 @@ function HackathonApplicationFormInner() {
   // --- End State for Hackathon Details ---
 
   // --- Fetch Hackathon Details Function (Defined but commented out in useEffect) ---
-  /*
   const fetchDetails = async () => {
       setDetailsLoading(true);
       setDetailsError(null);
@@ -59,12 +58,13 @@ function HackathonApplicationFormInner() {
       }
       try {
         // *** IMPORTANT: Replace with your actual API endpoint ***
-        const res = await fetch(`/api/hackathons/${hackathonId}`);
+        const res = await fetch(`/api/hackathon/${hackathonId}`);
         if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.error || `Failed to fetch hackathon details (status ${res.status})`);
         }
         const data: HackathonDetails = await res.json();
+        console.log(data)
         setHackathonDetails(data);
       } catch (error: any) {
         console.error("Error fetching hackathon details:", error);
@@ -73,22 +73,19 @@ function HackathonApplicationFormInner() {
         setDetailsLoading(false);
       }
     };
-    */
   // --- End Fetch Hackathon Details ---
 
   // Load placeholder data in useEffect
   useEffect(() => {
     // --- Option 1: Use Placeholder Data (Active) ---
-    console.log("Using placeholder data for Hackathon ID:", hackathonId); // Log the ID being applied for
-    setHackathonDetails(placeholderHackathonDetails);
-    setDetailsLoading(false); // Stop loading after setting placeholder
-    setDetailsError(null); // Clear any errors
+    // console.log("Using placeholder data for Hackathon ID:", hackathonId); // Log the ID being applied for
+    // setHackathonDetails(placeholderHackathonDetails);
+    // setDetailsLoading(false); // Stop loading after setting placeholder
+    // setDetailsError(null); // Clear any errors
     // --- End Option 1 ---
 
     // --- Option 2: Use API Data (Comment out Option 1 and uncomment below) ---
-    /*
     fetchDetails();
-    */
     // --- End Option 2 ---
 
   }, [hackathonId]); // Rerun if ID changes (though only placeholder loads)
@@ -139,7 +136,6 @@ function HackathonApplicationFormInner() {
     setLoading(false);
 
     // --- Original API Call Logic (Commented Out) ---
-    /*
     try {
       const res = await fetch("/api/hackathonds", {
         method: "POST",
@@ -164,7 +160,6 @@ function HackathonApplicationFormInner() {
     } finally {
       setLoading(false);
     }
-    */
     // --- End Original API Call Logic ---
   };
   // --- End Submit Handler ---
