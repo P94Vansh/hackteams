@@ -55,7 +55,9 @@ const Header = () => {
                         {/* End Dropdown Menu */}
 
                         <Button variant="outline" size="sm">
+                            <Link href={'/signin'}>
                             Sign In
+                            </Link>
                         </Button>
                     </div>
 
@@ -83,7 +85,9 @@ const Header = () => {
                         {/* You might still want quick access links here */}
                          <DropdownMenuSeparator /> {/* Optional separator */}
                         <Button variant="outline" className="w-full">
+                            <Link href="/signin" className="text-foreground/80 hover:text-foreground transition-colors" onClick={handleMobileLinkClick}>
                             Sign In
+                            </Link>
                         </Button>
                     </nav>
                 </div>
