@@ -1,14 +1,12 @@
+
 import { prisma } from "@/lib/prisma";
 import { NextResponse,NextRequest } from "next/server";
 
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) 
- {
+
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params;
+    const { id } = await context.params;
 
     if (!id || isNaN(Number(id))) {
       return NextResponse.json(

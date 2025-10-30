@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma";
-
-export async function POST(req, { params }) {
+import { NextRequest } from "next/server";
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> } // ✅ correct typing for Next.js 15+
+) {
   try {
-    const { id } = params;
+    const { id } = await context.params; 
     const { status } = await req.json(); // 'accept' or 'reject'
 
     // 1️⃣ Find application with related hackathon + applicant
@@ -97,7 +100,7 @@ export async function POST(req, { params }) {
     return new Response(JSON.stringify({ error: "Invalid status value" }), {
       status: 400,
     });
-  } catch (error) {
+  } catch (error:any) {
     console.error("Error updating application:", error);
     return new Response(
       JSON.stringify({

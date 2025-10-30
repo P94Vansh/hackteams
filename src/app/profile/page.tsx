@@ -67,39 +67,6 @@ interface UserInfo {
 // --- End Type Definitions ---
 
 // --- Placeholder Data ---
-const placeholderUserInfo: UserInfo = {
-  id: 1,
-  name: "Aditya Singh",
-  email: "aditya.singh@example.com",
-  university: "Example University",
-  course: "Computer Science",
-  year: "Sophomore",
-  location: "Patna, India",
-  bio: "Aspiring full-stack developer interested in web technologies and hackathons. Always looking to learn and collaborate on exciting projects.",
-  github: "github.com/aditya-2441", // Replace with actual if known
-  portfolio: "aditya-portfolio.dev", // Replace with actual if known
-  skills: ["React", "Next.js", "TypeScript", "Node.js", "Prisma", "Tailwind CSS", "Java"],
-  interests: ["Web Development", "AI/ML", "Hackathons", "Open Source", "UI/UX Design"]
-};
-
-const placeholderProjects: Project[] = [
-  { id: 101, name: "HackTeams Platform", bio: "The very platform for finding hackathon teammates.", skills: ["Next.js", "Prisma", "TypeScript", "PostgreSQL"] },
-  { id: 102, name: "AI Study Buddy", bio: "An AI-powered tool to help students summarize notes and generate quizzes.", skills: ["Python", "Flask", "NLP", "React"] },
-  { id: 103, name: "Personal Portfolio V2", bio: "Revamped personal website showcasing projects and skills.", skills: ["React", "Tailwind CSS", "Framer Motion"] },
-];
-
-const placeholderTeams: TeamMember[] = [
-  // Team data is less defined in the API/Schema, making placeholders tricky.
-  // Assuming a structure based on original attempt. API needs verification.
-  { userId: 1, team: { id: 201, teamName: "Code Wizards", hackathonName: "SIH 2025", active: true }, role: "Frontend Lead" },
-  { userId: 1, team: { id: 202, teamName: "Data Dynamos", hackathonName: "Local Hack Day", active: false }, role: "Backend Dev" },
-];
-
-const placeholderAchievements: Achievement[] = [
-  { id: 301, name: "Won 1st Place - Local Hack Day", month: "October", year: "2024" },
-  { id: 302, name: "Published Research Paper on AI Ethics", month: "May", year: "2025" },
-  { id: 303, name: "Dean's List - Spring Semester", month: "June", year: "2025" },
-];
 // --- End Placeholder Data ---
 
 
