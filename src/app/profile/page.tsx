@@ -1,7 +1,7 @@
 // src/app/profile/page.tsx
 'use client'
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Keep axios imported for API calls
+import axios from "axios";
 // --- Import UI components ---
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,12 +19,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 // --- Import Icons ---
-import { User, Plus, Github, ExternalLink } from "lucide-react";
+// 'User' icon pehle se hai, 'Pencil' add karein
+import { User, Plus, Github, ExternalLink, Pencil } from "lucide-react";
 // --- Import styles and utils ---
 import styles from './profile.module.css';
 import { cn } from "@/lib/utils";
 
-// --- Type Definitions (Keep these) ---
+// --- Type Definitions (skills/interests ko non-nullable banayein) ---
 interface Project {
   id: number;
   name: string;
@@ -35,14 +36,13 @@ interface Team {
     id: number;
     teamName: string;
     hackathonName: string;
-    active: boolean; // Assuming this exists based on original code
+    active: boolean;
 }
 interface TeamMember {
   teamName:string;
   role: string;
   hackathonName:string;
   teamId:string;
-   // Assuming this exists based on original code
 }
 interface Achievement {
   id: number;
@@ -61,13 +61,11 @@ interface UserInfo {
   bio?: string | null;
   github?: string | null;
   portfolio?: string | null;
-  skills?: string[] | null;
-  interests?: string[] | null;
+  // Inhein optional se hata dein, API hamesha array dega (chahe empty)
+  skills: string[]; 
+  interests: string[];
 }
 // --- End Type Definitions ---
-
-// --- Placeholder Data ---
-// --- End Placeholder Data ---
 
 
 export default function ProfilePage() {
@@ -84,16 +82,34 @@ export default function ProfilePage() {
     const [isTeamDialogOpen, setIsTeamDialogOpen] = useState(false);
     const [isAchievementDialogOpen, setIsAchievementDialogOpen] = useState(false);
 
-    // --- API Fetching Logic (Keep functions defined but commented out in useEffect) ---
+    // === NAYA STATE EDIT DIALOG KE LIYE ===
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [editFormData, setEditFormData] = useState({
+        bio: "",
+        university: "",
+        course: "",
+        year: "",
+        location: "",
+        github: "",
+        portfolio: "",
+        skills: "", // Comma-separated string ke liye
+        interests: "" // Comma-separated string ke liye
+    });
+    // ======================================
+
+    // --- API Fetching Logic ---
     const fetchUserInfo = async () => {
       setLoadingError(null);
       try {
+        // /api/user se logged-in user ka data lein
         const userRes = await axios.get("/api/user");
         let userData: UserInfo = userRes.data;
 
+        // /api/users/[id] se full profile (projects, achievements) lein
         if (userData?.id) {
             try {
                 const fullProfileRes = await axios.get(`/api/users/${userData.id}`);
+                // Dono responses ko merge karein
                 userData = { ...userData, ...fullProfileRes.data.data };
             } catch (profileErr) {
                 console.warn("Could not fetch full profile details, using basic info:", profileErr);
@@ -109,15 +125,14 @@ export default function ProfilePage() {
 
     const fetchRelatedData = async () => {
       try {
-        const [projectsRes, achievementsRes,teamsRes] = await Promise.all([
+        const [projectsRes, achievementsRes, teamsRes] = await Promise.all([
           axios.get("/api/projects"),
           axios.get("/api/achievements"),
-          axios.get("/api/teams"), // Still assuming GET /api/teams might not exist
+          axios.get("/api/teams"),
         ]);
         setProjects(projectsRes.data || []);
         setAchievements(achievementsRes.data || []);
         setTeams(teamsRes.data || []);
-        console.log(teamsRes.data)
       } catch (err) {
         console.error("Error fetching related profile data:", err);
         setLoadingError((prev) => (prev ? prev + " Also failed to load projects/achievements." : "Could not load projects and achievements."));
@@ -126,18 +141,29 @@ export default function ProfilePage() {
     // --- End API Fetching Logic ---
 
     useEffect(() => {
-      // --- Option 1: Use Placeholder Data (Currently Active) ---
-      // --- End Option 1 ---
-
-      // --- Option 2: Use API Data (Comment out Option 1 and uncomment below) ---
       fetchUserInfo();
       fetchRelatedData();
-      // --- End Option 2 ---
-
     }, []);
 
-    // --- Add Handlers (Using Axios POST) ---
-    // These remain unchanged, they will make API calls when invoked
+    // === NAYA EFFECT: EDIT FORM KO POPULATE KARNE KE LIYE ===
+    useEffect(() => {
+        if (userInfo) {
+            setEditFormData({
+                bio: userInfo.bio || "",
+                university: userInfo.university || "",
+                course: userInfo.course || "",
+                year: userInfo.year || "",
+                location: userInfo.location || "",
+                github: userInfo.github || "",
+                portfolio: userInfo.portfolio || "",
+                skills: userInfo.skills?.join(", ") || "",
+                interests: userInfo.interests?.join(", ") || ""
+            });
+        }
+    }, [userInfo]);
+    // =======================================================
+
+    // --- Add Handlers ---
     const handleAddProject = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -146,29 +172,54 @@ export default function ProfilePage() {
             ...newProject,
             skills: skillsArray,
           });
-          setProjects([...projects, res.data]); // Update state with response
+          setProjects([...projects, res.data]);
           setNewProject({ name: "", bio: "", skills: "" });
           setIsProjectDialogOpen(false);
         } catch (err) {
           console.error("Error adding project:", err);
-          // TODO: Show specific error in UI
         }
       };
-
 
     const handleAddAchievement = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
           const res = await axios.post("/api/achievements", newAchievement);
-          setAchievements([...achievements, res.data]); // Update state with response
+          setAchievements([...achievements, res.data]);
           setNewAchievement({ name: "", month: "", year: "" });
           setIsAchievementDialogOpen(false);
         } catch (err) {
           console.error("Error adding achievement:", err);
-           // TODO: Show specific error in UI
         }
       };
-    // --- End Add Handlers ---
+    
+    // === NAYA HANDLER: PROFILE UPDATE KE LIYE ===
+    const handleProfileUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            // Strings ko arrays mein convert karein API ke liye
+            const apiData = {
+                ...editFormData,
+                skills: editFormData.skills ? editFormData.skills.split(",").map(s => s.trim()).filter(s => s) : [],
+                interests: editFormData.interests ? editFormData.interests.split(",").map(i => i.trim()).filter(i => i) : []
+            };
+
+            const res = await axios.put("/api/user", apiData);
+            
+            // Local state ko naye data se update karein
+            setUserInfo(res.data); 
+            setIsEditDialogOpen(false);
+        } catch (err) {
+            console.error("Error updating profile:", err);
+            // Yahaan error message dikha sakte hain
+        }
+    };
+
+    // Edit form mein changes ko handle karein
+    const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setEditFormData(prev => ({ ...prev, [name]: value }));
+    };
+    // ============================================
 
 
     // Helper to format URLs
@@ -181,8 +232,6 @@ export default function ProfilePage() {
   // --- JSX Structure ---
   return (
     <div className={styles.pageContainer}>
-      {/* Page Title Removed */}
-
       {loadingError && (
           <Card className={styles.errorCard}>
               <CardContent className={styles.errorCardContent}>
@@ -195,7 +244,6 @@ export default function ProfilePage() {
       {userInfo ? (
             <Card className={styles.card}>
                <CardContent className={styles.userInfoContent}>
-                   {/* Avatar and Name/Email */}
                    <div className={styles.userInfoHeader}>
                         <Avatar className={styles.avatar}>
                             <AvatarFallback>{userInfo.name?.substring(0, 2).toUpperCase() || 'UU'}</AvatarFallback>
@@ -204,8 +252,63 @@ export default function ProfilePage() {
                             <h2 className={styles.userName}>{userInfo.name}</h2>
                             <p className={styles.userEmail}>{userInfo.email}</p>
                         </div>
+                        
+                        {/* === NAYA EDIT BUTTON === */}
+                        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button size="sm" variant="outline" className={cn(styles.editProfileButton, "ml-auto")}>
+                                    <Pencil className="h-4 w-4 mr-2" /> Edit Profile
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className={styles.dialogContent}>
+                                <DialogHeader><DialogTitle>Edit Your Profile</DialogTitle></DialogHeader>
+                                <form onSubmit={handleProfileUpdate} className={styles.dialogForm}>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="bio">Bio</Label>
+                                        <Textarea id="bio" name="bio" placeholder="Aapke baare mein..." value={editFormData.bio} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="university">University</Label>
+                                        <Input id="university" name="university" placeholder="University Name" value={editFormData.university} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="course">Course</Label>
+                                        <Input id="course" name="course" placeholder="e.g., Computer Science" value={editFormData.course} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="year">Year</Label>
+                                        <Input id="year" name="year" placeholder="e.g., Sophomore" value={editFormData.year} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="location">Location</Label>
+                                        <Input id="location" name="location" placeholder="City, Country" value={editFormData.location} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="github">GitHub</Label>
+                                        <Input id="github" name="github" placeholder="https://github.com/username" value={editFormData.github} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="portfolio">Portfolio</Label>
+                                        <Input id="portfolio" name="portfolio" placeholder="https://your-website.com" value={editFormData.portfolio} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="skills">Skills (comma separated)</Label>
+                                        <Input id="skills" name="skills" placeholder="React, Node.js, Figma" value={editFormData.skills} onChange={handleEditFormChange} />
+                                    </div>
+                                    <div className={styles.dialogInputGroup}>
+                                        <Label htmlFor="interests">Interests (comma separated)</Label>
+                                        <Input id="interests" name="interests" placeholder="AI, Web Dev, Startups" value={editFormData.interests} onChange={handleEditFormChange} />
+                                    </div>
+                                    <DialogFooter className={styles.dialogFooter}>
+                                        <DialogClose asChild><Button type="button" variant="ghost">Cancel</Button></DialogClose>
+                                        <Button type="submit">Save Changes</Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                        {/* ======================= */}
                     </div>
-                    {/* Bio, Details, Links, Skills, Interests */}
+
                      {userInfo.bio && <p className={styles.userBio}>{userInfo.bio}</p>}
                      <div className={styles.userDetailsGrid}>
                         {userInfo.university && <div className={styles.detailItem}><span className={styles.detailLabel}>University:</span> {userInfo.university}</div>}
@@ -247,7 +350,7 @@ export default function ProfilePage() {
             !loadingError && <p className={styles.loadingText}>Loading user info...</p>
         )}
 
-        {/* --- Sections Grid --- */}
+        {/* --- Sections Grid (Projects, Teams, Achievements) --- */}
         <div className={styles.sectionsGrid}>
             {/* Projects Section */}
             <Card className={styles.card}>
