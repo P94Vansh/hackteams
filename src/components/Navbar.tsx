@@ -1,27 +1,59 @@
 // src/components/Navbar.tsx
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { Search, User, Bell, Menu, X } from "lucide-react";
+// Import new icons and Dropdown components
+import { User, Bell, Menu, LogOut, LogIn } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator // Optional: if you want separators
-} from "@/components/ui/dropdown-menu"; // Make sure you've added dropdown-menu via shadcn/ui
-import { cn } from "@/lib/utils"; // Import cn utility
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    // We no longer need isMenuOpen state
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    
+    const router = useRouter();
 
-    // Close mobile menu when a link is clicked (optional but good UX)
-    const handleMobileLinkClick = () => {
-        setIsMenuOpen(false);
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            try {
+                const response = await axios.get("/api/user"); 
+                if (response.status === 200) {
+                    setIsLoggedIn(true);
+                } else {
+                    setIsLoggedIn(false);
+                }
+            } catch (error) {
+                setIsLoggedIn(false);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        checkAuthStatus();
+    }, []);
+
+    // Logout handler remains the same
+    const handleLogout = async () => {
+        try {
+            await axios.post("/api/logout");
+            setIsLoggedIn(false);
+            router.push("/");
+            router.refresh(); // Force a refresh to update state
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
     };
-
+    
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-sm">
             <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -35,10 +67,9 @@ const Header = () => {
                     </Link>
                 </div>
 
-                {/* Desktop Navigation Removed */}
-
                 {/* Actions */}
                 <div className="flex items-center space-x-3">
+                    {/* --- DESKTOP ACTIONS (Hidden on Mobile) --- */}
                     <div className="hidden md:flex items-center space-x-2">
                         <Button variant="ghost" size="icon" aria-label="Notifications">
                             <Link href={'/notifications'}>
@@ -46,52 +77,73 @@ const Header = () => {
                             </Link>
                         </Button>
 
-                        {/* Dropdown Menu for Profile & Main Nav */}
                         <Button variant="ghost" size="icon" aria-label="User Menu">
                             <Link href={'/profile'}>
                             <User className="h-5 w-5" />
                             </Link>
                         </Button>
-                        {/* End Dropdown Menu */}
-
-                        <Button variant="outline" size="sm">
-                            <Link href={'/signin'}>
-                            Sign In
-                            </Link>
-                        </Button>
+                        
+                        {isLoading ? (
+                            <Button variant="outline" size="sm" disabled>...</Button>
+                        ) : isLoggedIn ? (
+                            // --- THIS BUTTON WAS CHANGED ---
+                            <Button variant="outline" size="sm" onClick={handleLogout}>
+                                <LogOut className="h-4 w-4" /> 
+                                Logout
+                            </Button>
+                            // ---------------------------------
+                        ) : (
+                            <Button variant="outline" size="sm">
+                                <Link href={'/signin'}>
+                                Sign In
+                                </Link>
+                            </Button>
+                        )}
                     </div>
 
-                    {/* Mobile menu button */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="md:hidden"
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        aria-label="Toggle Menu"
-                    >
-                        {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                    </Button>
+                    {/* --- MOBILE MENU DROPDOWN (Hidden on Desktop) --- */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="md:hidden" // Only show on mobile
+                                aria-label="Toggle Menu"
+                            >
+                                <Menu className="h-5 w-5" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 md:hidden">
+                            {isLoading ? (
+                                <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
+                            ) : isLoggedIn ? (
+                                <>
+                                    <DropdownMenuItem onClick={() => router.push('/profile')}>
+                                        <User className="mr-2 h-4 w-4" />
+                                        <span>Profile</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => router.push('/notifications')}>
+                                        <Bell className="mr-2 h-4 w-4" />
+                                        <span>Notifications</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={handleLogout}>
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>Logout</span>
+                                    </DropdownMenuItem>
+                                </>
+                            ) : (
+                                <DropdownMenuItem onClick={() => router.push('/signin')}>
+                                    <LogIn className="mr-2 h-4 w-4" />
+                                    <span>Sign In</span>
+                                </DropdownMenuItem>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                 </div>
             </div>
-
-            {/* Mobile Navigation */}
-            {isMenuOpen && (
-                <div className="md:hidden border-t bg-white/95 backdrop-blur-sm">
-                    {/* Simplified mobile nav, assuming dropdown covers main links */}
-                    <nav className="flex flex-col space-y-3 py-4 px-4">
-                        <Link href="/profile" className="text-foreground/80 hover:text-foreground transition-colors" onClick={handleMobileLinkClick}>
-                           Profile
-                        </Link>
-                        {/* You might still want quick access links here */}
-                         <DropdownMenuSeparator /> {/* Optional separator */}
-                        <Button variant="outline" className="w-full">
-                            <Link href="/signin" className="text-foreground/80 hover:text-foreground transition-colors" onClick={handleMobileLinkClick}>
-                            Sign In
-                            </Link>
-                        </Button>
-                    </nav>
-                </div>
-            )}
+            
         </header>
     );
 };

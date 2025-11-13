@@ -131,8 +131,11 @@ const Index = () => {
             <div className={cn("flex flex-col sm:flex-row gap-4 justify-center", styles.heroActions)}>
               <Button asChild variant="outline" size="lg" className="text-lg px-8 py-3 border-gray-400 text-gray-200 hover:bg-white/10 hover:border-white hover:text-white">
                 <Link href="/hackathon-dash">
-                  Find Teams <ArrowRight className="ml-2 h-5 w-5" />
+                  Find Teams 
                 </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-3 border-gray-400 text-gray-200 hover:bg-white/10 hover:border-white hover:text-white">
+                <Link href="/hackathon">Create Team</Link>
               </Button>
             </div>
           </div>
@@ -228,8 +231,8 @@ const Index = () => {
             and building the future through hackathons.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-3">
-              Sign Up Free
+            <Button asChild size="lg" variant="outline" className="text-lg px-8 py-3 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors">
+              <Link href="/register">Register</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="text-lg px-8 py-3 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary transition-colors">
               <Link href="/hackathon-dash">Explore Teams</Link>
